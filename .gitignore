@@ -209,3 +209,5 @@ pyvenv.cfg
 .venv
 pip-selfcheck.json
 
+/bookbase/share/
+/db.sqlite3
