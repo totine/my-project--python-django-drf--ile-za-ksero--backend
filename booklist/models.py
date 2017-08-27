@@ -10,7 +10,7 @@ class Author(models.Model):
 
 
 class Book(models.Model):
-    author = models.OneToOneField(Author)
+    author = models.ManyToManyField(Author)
     title = models.CharField(max_length=200)
     subtitle = models.CharField(max_length=200, default="")
     year_of_publish = models.IntegerField()
