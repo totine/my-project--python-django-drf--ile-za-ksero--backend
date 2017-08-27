@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-{% load static %}
-    <meta charset="UTF-8">
-    <link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.4.1/css/mdb.css" type="text/css">
-    <link rel="stylesheet" href="{% static "css/custom.css" %}" type="text/css">
+{% extends "base.html" %}
 
-    <title>Title</title>
-</head>
-<body>
-<h1 class="btn btn-default">asdf</h1>
-</body>
-</html>
+{% block title %}
+    Home
+{% endblock %}
+
+{% block body %}
+
+    <h1 class="btn btn-default">asdf</h1>
+
+{% endblock %}
