@@ -5,16 +5,23 @@
 {% endblock %}
 
 {% block body %}
-<div class="container-fluid">
-<div class="row">
-<div class="col">
-    <h1>Książki</h1>
-    <ul>
-    {% for book in books %}
-    <li>{{ book.title }}</li>
-    {% endfor %}
-    </ul>
-</div>
-</div>
-</div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <h1>Książki</h1>
+                <table>
+                    {% for book in books %}
+                        <tr>
+                            <td>{{ book.title }}</td>
+                            <td>
+                                {% for author in book.bookauthor_set.all %}
+                                    {{ author.author.firstname }} {{ author.author.surname }}<br>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
 {% endblock %}
