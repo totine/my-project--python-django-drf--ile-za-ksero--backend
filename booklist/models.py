@@ -10,7 +10,17 @@ class Author(models.Model):
 
 
 class Book(models.Model):
-    author = models.ManyToManyField(Author)
     title = models.CharField(max_length=200)
     subtitle = models.CharField(max_length=200, default="")
     year_of_publish = models.IntegerField()
+
+
+class BookAuthor(models.Model):
+    book = models.ForeignKey(Book)
+    author = models.ForeignKey(Author)
+    is_editor = models.BooleanField(default=False)
+    position = models.IntegerField()
+
+    class Meta:
+        ordering = ['position']
+        unique_together = ('book', 'author', 'is_editor', 'position')
