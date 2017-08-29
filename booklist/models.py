@@ -12,7 +12,7 @@ class Author(models.Model):
 class Book(models.Model):
     title = models.CharField(max_length=200)
     subtitle = models.CharField(max_length=200, default="")
-    year_of_publish = models.IntegerField()
+    isbn = models.IntegerField()
 
 
 class BookAuthor(models.Model):
@@ -24,3 +24,28 @@ class BookAuthor(models.Model):
     class Meta:
         ordering = ['position']
         unique_together = ('book', 'author', 'is_editor', 'position')
+
+
+class Country(models.Model):
+    name = models.CharField(max_length=50)
+
+
+class City(models.Model):
+    name = models.CharField(max_length=50)
+    country = models.ForeignKey(Country)
+
+
+class Publisher(models.Model):
+    name = models.CharField(max_length=50)
+    city = models.ForeignKey(City)
+
+
+class Edition(models.Model):
+    number = models.PositiveIntegerField(default=1)
+    year = models.PositiveIntegerField()
+    comment = models.CharField(max_length=50)
+
+
+class BookSeries(models.Model):
+    name = models.CharField(max_length=100)
+    publisher = models.ForeignKey(Publisher)
