@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'bookbase.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'bookbase',
+        'NAME': 'bookbasenew',
         'USER': 'bookbasesuperuser',
         'PASSWORD': '123#@!basebook!@#321su',
         'HOST': 'localhost',
