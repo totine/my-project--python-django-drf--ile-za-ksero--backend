@@ -49,6 +49,11 @@ class NumberOfPages(models.Model):
     roman = models.PositiveIntegerField(default=0)
 
 
+class Part(models.Model):
+    part_name = models.CharField(max_length=20)
+    part_number = models.PositiveIntegerField()
+
+
 class Format(models.Model):
     width = models.PositiveIntegerField()
     height = models.PositiveIntegerField()
@@ -63,6 +68,7 @@ class Cover(models.Model):
 
 class Book(models.Model):
     title = models.CharField(max_length=200)
+    part = models.OneToOneField(Part, default=None)
     subtitle = models.CharField(max_length=200, default="")
     isbn = models.PositiveIntegerField(default=0, unique=True)
     publisher = models.ForeignKey(Publisher, default=None)
