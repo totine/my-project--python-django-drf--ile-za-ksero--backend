@@ -1,7 +1,5 @@
 from django.db import models
 
-# Create your models here.
-
 
 class Person(models.Model):
     firstname = models.CharField(max_length=50)
@@ -29,10 +27,16 @@ class Edition(models.Model):
     comment = models.CharField(max_length=50)
 
 
+class Language(models.Model):
+    name = models.CharField(max_length=50)
+
+
 class ForeignEdition(models.Model):
+    language = models.ForeignKey(Language, default=None)
     number = models.PositiveIntegerField(default=1)
     year = models.PositiveIntegerField()
     publisher = models.ForeignKey(Publisher)
+    translator = models.ManyToManyField(Person)
 
 
 class BookSeries(models.Model):
@@ -40,13 +44,34 @@ class BookSeries(models.Model):
     publisher = models.ForeignKey(Publisher)
 
 
+class NumberOfPages(models.Model):
+    arabic = models.PositiveIntegerField(default=0)
+    roman = models.PositiveIntegerField(default=0)
+
+
+class Format(models.Model):
+    width = models.PositiveIntegerField()
+    height = models.PositiveIntegerField()
+    weight = models.PositiveIntegerField()
+
+
+class Cover(models.Model):
+    type = models.CharField(max_length=50)
+    is_with_wings = models.BooleanField(default=False)
+    is_dust_jacket = models.BooleanField(default=False)
+
+
 class Book(models.Model):
     title = models.CharField(max_length=200)
     subtitle = models.CharField(max_length=200, default="")
-    isbn = models.PositiveIntegerField(default=0)
-    edition = models.OneToOneField(Edition)
+    isbn = models.PositiveIntegerField(default=0, unique=True)
+    publisher = models.ForeignKey(Publisher, default=None)
+    edition = models.OneToOneField(Edition, default=None)
     foreign_edition = models.OneToOneField(ForeignEdition, default=None)
     series = models.ForeignKey(BookSeries, default=None)
+    number_of_pages = models.OneToOneField(NumberOfPages, default=None)
+    format = models.OneToOneField(Format, default=None)
+    cover = models.OneToOneField(Cover, default=None)
 
 
 class Author(models.Model):
@@ -58,6 +83,8 @@ class Author(models.Model):
     class Meta:
         ordering = ['position']
         unique_together = ('book', 'author', 'is_editor', 'position')
+
+
 
 
 
