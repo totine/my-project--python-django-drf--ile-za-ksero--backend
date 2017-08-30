@@ -85,6 +85,8 @@ class Author(models.Model):
         unique_together = ('book', 'author', 'is_editor', 'position')
 
 
-
+class XeroBook(models.Model):
+    book = models.OneToOneField(Book)
+    xero_pages = models.IntegerField()
 
 
