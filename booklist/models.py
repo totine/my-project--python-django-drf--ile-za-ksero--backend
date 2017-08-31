@@ -17,14 +17,15 @@ class City(models.Model):
 
 
 class Publisher(models.Model):
-    name = models.CharField(max_length=50)
+    full_name = models.CharField(max_length=50)
+    short_name = models.CharField(max_length=30, default=None, null=True)
     city = models.ForeignKey(City)
 
 
 class Edition(models.Model):
     number = models.PositiveIntegerField(default=1)
     year = models.PositiveIntegerField()
-    comment = models.CharField(max_length=50)
+    comment = models.CharField(max_length=50, default=None)
 
 
 class Language(models.Model):
@@ -52,6 +53,7 @@ class NumberOfPages(models.Model):
 class Part(models.Model):
     part_name = models.CharField(max_length=20)
     part_number = models.PositiveIntegerField()
+    number_of_parts = models.PositiveIntegerField(default=0)
 
 
 class Format(models.Model):
@@ -78,6 +80,7 @@ class Book(models.Model):
     number_of_pages = models.OneToOneField(NumberOfPages, default=None)
     format = models.OneToOneField(Format, default=None)
     cover = models.OneToOneField(Cover, default=None)
+    price_on_cover = models.DecimalField(max_digits=6, decimal_places=2, default=0)
 
 
 class Author(models.Model):
