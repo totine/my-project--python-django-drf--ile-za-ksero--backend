@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.signals import post_save
 
 
 class Person(models.Model):
@@ -97,5 +98,14 @@ class Author(models.Model):
 class XeroBook(models.Model):
     book = models.OneToOneField(Book)
     xero_pages = models.IntegerField()
+
+
+def create_xero_book(sender, **kwargs):
+    if kwargs['created']:
+        xero_book = XeroBook.objects.create(book = kwargs['instance'])
+
+post_save.connect(create_xero_book, sender=Book)
+
+
 
 
