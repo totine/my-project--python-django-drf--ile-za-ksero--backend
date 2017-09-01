@@ -56,8 +56,8 @@ ROOT_URLCONF = 'bookbase.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'booklist/templates')]
-        ,
+        'DIRS': [os.path.join(BASE_DIR, 'bookbase/templates'),
+                 os.path.join(BASE_DIR, 'booklist/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
