@@ -69,6 +69,11 @@ class Cover(models.Model):
     is_dust_jacket = models.BooleanField(default=False)
 
 
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+    upper_category = models.ForeignKey("self", default=None)
+
+
 class Book(models.Model):
     title = models.CharField(max_length=200)
     part = models.OneToOneField(Part, default=None)
@@ -82,6 +87,7 @@ class Book(models.Model):
     format = models.OneToOneField(Format, default=None)
     cover = models.OneToOneField(Cover, default=None)
     price_on_cover = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    categories = models.ManyToManyField(Category)
 
 
 class Author(models.Model):
