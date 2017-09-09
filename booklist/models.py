@@ -4,17 +4,29 @@ from django.db.models.signals import post_save
 
 class Person(models.Model):
     firstname = models.CharField(max_length=50)
-    secondname = models.CharField(max_length=50, default="")
+    secondname = models.CharField(max_length=50, default="", blank=True)
     surname = models.CharField(max_length=50)
+
+    def __str__(self):
+        return " ".join([self.firstname, self.secondname, self.surname])
+
+    def getFullName(self):
+        return " ".join([self.firstname, self.secondname, self.surname])
 
 
 class Country(models.Model):
     name = models.CharField(max_length=50)
 
+    def __str__(self):
+        return self.name
+
 
 class City(models.Model):
     name = models.CharField(max_length=50)
     country = models.ForeignKey(Country)
+
+    def __str__(self):
+        return self.name
 
 
 class Publisher(models.Model):
@@ -22,15 +34,24 @@ class Publisher(models.Model):
     short_name = models.CharField(max_length=30, default=None, null=True)
     city = models.ForeignKey(City)
 
+    def __str__(self):
+        return self.full_name
+
 
 class Edition(models.Model):
     number = models.PositiveIntegerField(default=1)
     year = models.PositiveIntegerField()
-    comment = models.CharField(max_length=50, default=None)
+    comment = models.CharField(max_length=50, default="", blank=True)
+
+    def __str__(self):
+        return str(self.number) + ". " + str(self.year)
 
 
 class Language(models.Model):
     name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
 
 
 class ForeignEdition(models.Model):
@@ -50,6 +71,9 @@ class NumberOfPages(models.Model):
     arabic = models.PositiveIntegerField(default=0)
     roman = models.PositiveIntegerField(default=0)
 
+    def __str__(self):
+        return str(self.arabic) + ("roman: " + str(self.roman) if self.roman > 0 else "")
+
 
 class Part(models.Model):
     part_name = models.CharField(max_length=20)
@@ -60,7 +84,9 @@ class Part(models.Model):
 class Format(models.Model):
     width = models.PositiveIntegerField()
     height = models.PositiveIntegerField()
-    weight = models.PositiveIntegerField()
+
+    def __str__(self):
+        return str(self.width) + str(self.height)
 
 
 class Cover(models.Model):
@@ -68,26 +94,36 @@ class Cover(models.Model):
     is_with_wings = models.BooleanField(default=False)
     is_dust_jacket = models.BooleanField(default=False)
 
+    def __str__(self):
+        return self.type + ("with wings" if self.is_with_wings else "" + "with dust jacket" if self.is_dust_jacket else "")
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    upper_category = models.ForeignKey("self", default=None)
+    upper_category = models.ForeignKey("self", default=None, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Book(models.Model):
     title = models.CharField(max_length=200)
-    part = models.OneToOneField(Part, default=None)
-    subtitle = models.CharField(max_length=200, default="")
-    isbn = models.PositiveIntegerField(default=0, unique=True)
+    part = models.OneToOneField(Part, default=None, null=True, blank=True)
+    subtitle = models.CharField(max_length=200, default="", null=True, blank=True)
+    isbn = models.BigIntegerField(default=0, unique=True)
     publisher = models.ForeignKey(Publisher, default=None)
     edition = models.OneToOneField(Edition, default=None)
-    foreign_edition = models.OneToOneField(ForeignEdition, default=None)
-    series = models.ForeignKey(BookSeries, default=None)
+    foreign_edition = models.OneToOneField(ForeignEdition, default=None, null=True, blank=True)
+    series = models.ForeignKey(BookSeries, default=None, null=True, blank=True)
     number_of_pages = models.OneToOneField(NumberOfPages, default=None)
     format = models.OneToOneField(Format, default=None)
+    weight = models.PositiveIntegerField(default=0)
     cover = models.OneToOneField(Cover, default=None)
     price_on_cover = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     categories = models.ManyToManyField(Category)
+
+    def __str__(self):
+        return "{} {} {}".format(self.title, self.edition.number, self.author_set.all())
 
 
 class Author(models.Model):
@@ -100,15 +136,18 @@ class Author(models.Model):
         ordering = ['position']
         unique_together = ('book', 'author', 'is_editor', 'position')
 
+    def __str__(self):
+        return self.author.getFullName() + (" (red.)" if self.is_editor else "")
+
 
 class XeroBook(models.Model):
     book = models.OneToOneField(Book)
-    xero_pages = models.IntegerField()
+    xero_pages = models.IntegerField(default=0)
 
 
 def create_xero_book(sender, **kwargs):
     if kwargs['created']:
-        xero_book = XeroBook.objects.create(book = kwargs['instance'])
+        xero_book = XeroBook.objects.create(book=kwargs['instance'])
 
 post_save.connect(create_xero_book, sender=Book)
 
