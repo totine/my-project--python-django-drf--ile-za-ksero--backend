@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models.signals import post_save
+import math
 
 
 class Person(models.Model):
@@ -143,6 +144,10 @@ class Author(models.Model):
 class XeroBook(models.Model):
     book = models.OneToOneField(Book)
     xero_pages = models.IntegerField(default=0)
+
+    @property
+    def xero_cards(self):
+        return math.ceil(self.xero_pages/2)
 
 
 def create_xero_book(sender, **kwargs):
