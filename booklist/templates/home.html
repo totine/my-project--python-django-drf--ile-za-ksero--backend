@@ -6,11 +6,52 @@
 {% endblock %}
 
 {% block body %}
+{#    {% load 'media_root' %}#}
     <div class="container-fluid">
         <div class="row">
             <div class="col">
-                <h1>Książki</h1>
+                <h1>Ile za ksero?</h1>
+            <p>Masz do skserowania książkę? Sprawdź ile będzie Cię to kosztować.</p>
+            <p>Chcesz sprzedać niepotrzebne już kserówki? Ułatw sobie wycenę.</p>
+
+<div class="md-form">
+    <i class="fa fa-lock prefix"></i>
+    <input type="text" class="input-alternate" placeholder="Szukaj">
+</div>
+
+                <div>
+                    {% for category in categories %}
+                        {% if category.upper_category == None %}
+                            <a href="/category/{{ category.id }}" class="btn btn-primary">{{ category.name }}</a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
                 <table class="table-hover" style="width: 100%">
+                <thead>
+                <tr>
+                    <th>
+                        Tytuł
+                    </th>
+                    <th>
+                        Autor/autorzy
+                    </th>
+                     <th>
+                        Wydanie, rok wydania
+                    </th>
+                    <th>
+                        Wydawnictwo
+                    </th>
+                    <th>
+                        Ilość stron (w książce)
+                    </th>
+                    <th>
+                        Cena okładkowa
+                    </th>
+                    <th>
+                        Ilość stron/kartek ksera
+                    </th>
+                </tr>
+                </thead>
                     {% for book in books %}
                         <tr>
                             <td>{{ book.book.title }}</td>
@@ -27,14 +68,18 @@
                         <td>
                             {{ book.book.number_of_pages }}
                         </td>
+                            <td>
+                            {{ book.book.price_on_cover}}
+                        </td>
                         <td>
                             {{ book.xero_pages }}<br>
                             {{ book.xero_cards }}
                         </td>
+                        <td></td>
                         <td>
-                            {{ book.xero_pages|mul:0.07 }} zł <br>
-
+                            {{ book.xero_pages|mul:0.06 }} zł <br>
                         </td>
+
                         </tr>
                     {% endfor %}
                 </table>
