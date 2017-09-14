@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models.signals import post_save
 import math
+from decimal import Decimal
 
 
 class Person(models.Model):
@@ -176,16 +177,17 @@ class XeroBook(models.Model):
     def set_actual_bind(self, bind):
         self.actual_bind = bind
 
+    @property
     def bind_price(self):
         return self.actual_bind.get_bind_price(self.xero_cards)
 
     @property
     def xero_price(self):
-        return self.xero_pages * self.actual_price
+        return round(Decimal(self.xero_pages * self.actual_price), 2)
 
     @property
-    def xero_price_with_bind(self,):
-        return self.bind_price() + self.xero_price
+    def xero_price_with_bind(self):
+        return self.bind_price + self.xero_price
 
 
 def create_xero_book(sender, **kwargs):
