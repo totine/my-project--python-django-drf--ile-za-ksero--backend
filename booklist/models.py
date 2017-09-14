@@ -162,13 +162,30 @@ class BindRange(models.Model):
 class XeroBook(models.Model):
     book = models.OneToOneField(Book)
     xero_pages = models.IntegerField(default=0)
+    actual_price = None
+    actual_bind = None
+
 
     @property
     def xero_cards(self):
         return math.ceil(self.xero_pages/2)
 
-    def bind_price(self, bind):
-        return bind.get_bind_price(self.xero_cards)
+    def set_actual_price(self, price):
+        self.actual_price = price
+
+    def set_actual_bind(self, bind):
+        self.actual_bind = bind
+
+    def bind_price(self):
+        return self.actual_bind.get_bind_price(self.xero_cards)
+
+    @property
+    def xero_price(self):
+        return self.xero_pages * self.actual_price
+
+    @property
+    def xero_price_with_bind(self,):
+        return self.bind_price() + self.xero_price
 
 
 def create_xero_book(sender, **kwargs):

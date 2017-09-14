@@ -18,6 +18,14 @@
     <i class="fa fa-lock prefix"></i>
     <input type="text" class="input-alternate" placeholder="Szukaj">
 </div>
+                <div class="md-form">
+                    <form method="get">
+                        <button type="submit" class="btn btn-amber" value="6" name="cost_per_page" >6 gr</button>
+                        <button type="submit" class="btn btn-amber" value="7" name="cost_per_page" >7 gr</button>
+                        <button type="submit" class="btn btn-amber" value="8" name="cost_per_page" >8 gr</button>
+                        <button type="submit" class="btn btn-amber" value="9" name="cost_per_page" >9 gr</button>
+                        </form>
+</div>
 
                 <div>
                     {% for category in categories %}
@@ -77,7 +85,7 @@
                         </td>
                         <td></td>
                         <td>
-                            {{ book.xero_pages|mul:0.06 }} zł <br>
+                            {{ book.xero_price }} zł <br>
                         </td>
 
                         </tr>
