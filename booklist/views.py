@@ -15,6 +15,6 @@ def home(request):
         book.set_actual_bind(bind)
         book.set_actual_price(cost_per_page)
 
-    data = {"books": books, "categories": categories, "bind": bind, "cost_per_page": cost_per_page}
+    data = {"books": books, "categories": categories, "bind": bind, "cost_per_page": cost_per_page, "search": search}
     return render(request, 'home.html', context=data)
 
