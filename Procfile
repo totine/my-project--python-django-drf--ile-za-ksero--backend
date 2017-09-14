@@ -1,1 +1,1 @@
-web: gunicorn bookbase.wsgi --log-file -
+web: gunicorn bookbase.wsgi:application --log-file -
