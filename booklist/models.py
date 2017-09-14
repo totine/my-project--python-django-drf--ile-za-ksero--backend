@@ -122,6 +122,7 @@ class Book(models.Model):
     cover = models.OneToOneField(Cover, default=None)
     price_on_cover = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     categories = models.ManyToManyField(Category)
+    cover_photo = models.ImageField(upload_to="covers", null=True)
 
     def __str__(self):
         return "{} {} {}".format(self.title, self.edition.number, self.author_set.all())
@@ -141,6 +142,23 @@ class Author(models.Model):
         return self.author.getFullName() + (" (red.)" if self.is_editor else "")
 
 
+class Bind(models.Model):
+    name = models.CharField(max_length=50)
+
+    def get_bind_price(self, number_of_pages):
+        range_for_pages = self.bindrange_set.filter(range_top__gte=number_of_pages).first()
+        return range_for_pages.range_price
+
+
+class BindRange(models.Model):
+    bind = models.ForeignKey(Bind)
+    range_top = models.PositiveIntegerField()
+    range_price = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+
+    class Meta:
+        ordering = ['range_top']
+
+
 class XeroBook(models.Model):
     book = models.OneToOneField(Book)
     xero_pages = models.IntegerField(default=0)
@@ -148,6 +166,9 @@ class XeroBook(models.Model):
     @property
     def xero_cards(self):
         return math.ceil(self.xero_pages/2)
+
+    def bind_price(self, bind):
+        return bind.get_bind_price(self.xero_cards)
 
 
 def create_xero_book(sender, **kwargs):
