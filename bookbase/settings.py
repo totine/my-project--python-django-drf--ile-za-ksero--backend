@@ -136,7 +136,7 @@ STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "booklist/static/media/")
 
-STATIC_ROOT = os.path.join(BASE_DIR, "booklist/static/")
+STATIC_ROOT = os.path.join(BASE_DIR, "bookbase/static/")
 
 db_from_env = dj_database_url.config()
 DATABASES['default'].update(db_from_env)
