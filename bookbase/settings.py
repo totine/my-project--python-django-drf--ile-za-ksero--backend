@@ -26,7 +26,7 @@ SECRET_KEY = '#gmjkp)c!q9m0%^&-v22or8rq#5-bszslu1qrdv6obz2%6)5v_'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ilezaksero.herokuapp.com']
+ALLOWED_HOSTS = ['ilezaksero.herokuapp.com', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -128,7 +128,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "bookbase/static/"),
+    os.path.join(BASE_DIR, "bookbase/static"),
 
 ]
 
@@ -136,7 +136,7 @@ STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "booklist/static/media/")
 
-STATIC_ROOT = os.path.join(BASE_DIR, "bookbase/static/")
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 db_from_env = dj_database_url.config()
 DATABASES['default'].update(db_from_env)
