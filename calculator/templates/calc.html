@@ -1,10 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% load mathfilters %}
 
-</body>
-</html>
+{% block title %}
+    Kalkulator
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <h1>Ile za ksero?</h1>
+                <p>Masz do skserowania książkę? Sprawdź ile będzie Cię to kosztować.</p>
+                <p>Chcesz sprzedać niepotrzebne już kserówki? Ułatw sobie wycenę.</p>
+                <h1>KALKULATOR</h1>
+                <form>
+                    <div>
+                        <label for="number">Ilość stron
+                            <input type="number" name="number" class="input-alternate" placeholder="Ilość stron" value="{{ number_of_pages }}">
+                        </label>
+                    </div>
+                    <div>
+                        <label for="cost_per_page" >Koszt 1 strony ksero
+                        <button type="submit"
+                                class="{% if cost_per_page == 0.06 %}btn btn-red{% else %}btn btn-amber"{% endif %}
+                                value="6" name="cost_per_page">6 gr
+                        </button>
+                        <button type="submit"
+                                class="{% if cost_per_page == 0.07 %}btn btn-red{% else %}btn btn-amber"{% endif %}
+                                value="7" name="cost_per_page">7 gr
+                        </button>
+                        <button type="submit"
+                                class="{% if cost_per_page == 0.08 %}btn btn-red{% else %}btn btn-amber"{% endif %}
+                                value="8" name="cost_per_page">8 gr
+                        </button>
+                        <button type="submit"
+                                class="{% if cost_per_page == 0.09 %}btn btn-red{% else %}btn btn-amber"{% endif %}
+                                value="9" name="cost_per_page">9 gr
+                        </button>
+</label>
+                    </div>
+                </form>
+            <div><h2>Kwota: {{ total_cost }} zł</h2></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
