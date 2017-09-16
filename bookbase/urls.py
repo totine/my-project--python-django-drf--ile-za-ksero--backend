@@ -19,5 +19,6 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include('booklist.urls')),
-    url(r'^account/', include('accounts.urls'))
+    url(r'^account/', include('accounts.urls')),
+    url(r'^calc/', include('calculator.urls'))
 ]

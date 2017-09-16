@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['ilezaksero.herokuapp.com', '127.0.0.1', 'localhost']
 # Application definition
 
 INSTALLED_APPS = [
+    'calculator.apps.CalculatorConfig',
     'accounts.apps.AccountsConfig',
     'booklist.apps.BooklistConfig',
     'django.contrib.admin',
