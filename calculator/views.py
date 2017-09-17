@@ -12,3 +12,8 @@ def calculator(request):
     data = {"cost_per_page": cost_per_page, "number_of_pages": number_of_pages, "total_cost": total_cost}
 
     return render(request, 'calc.html', context=data)
+
+
+def calculate(request):
+
+    return HttpResponse("calculate")

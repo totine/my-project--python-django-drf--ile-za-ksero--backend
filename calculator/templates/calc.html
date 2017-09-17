@@ -13,7 +13,8 @@
                 <p>Masz do skserowania książkę? Sprawdź ile będzie Cię to kosztować.</p>
                 <p>Chcesz sprzedać niepotrzebne już kserówki? Ułatw sobie wycenę.</p>
                 <h1>KALKULATOR</h1>
-                <form>
+                <form method="post" action="/calc/calculate/">
+                {% csrf_token %}
                     <div>
                         <label for="number">Ilość stron
                             <input type="number" name="number" class="input-alternate" placeholder="Ilość stron" value="{{ number_of_pages }}">
