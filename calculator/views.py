@@ -1,19 +1,27 @@
+from decimal import Decimal
+
 from django.shortcuts import render, HttpResponse
 
 # Create your views here.
+from calculator.models import XeroCalc
 
 
 def calculator(request):
     standard_xero_cost = 0.07
-    number_of_pages = request.GET.get('number', '') if request.GET.get('number', '') else 0
-    cost_per_page = int(request.GET.get('cost_per_page', '')) / 100 if request.GET.get('cost_per_page', '') else standard_xero_cost
-    total_cost = round(int(number_of_pages) * cost_per_page, 2)
-
-    data = {"cost_per_page": cost_per_page, "number_of_pages": number_of_pages, "total_cost": total_cost}
+    xero_cost = XeroCalc()
+    xero_cost.cost_per_page = standard_xero_cost
+    xero_cost.number_of_pages = 0
+    data = {"xero_cost": xero_cost}
 
     return render(request, 'calc.html', context=data)
 
 
 def calculate(request):
-
-    return HttpResponse("calculate")
+    print(request.POST)
+    cost_per_page = Decimal(request.POST['cost_per_page'])/100
+    number_of_pages = int(request.POST['number_of_pages'])
+    xero_cost = XeroCalc()
+    xero_cost.cost_per_page = cost_per_page
+    xero_cost.number_of_pages = number_of_pages
+    data = {"xero_cost": xero_cost}
+    return render(request, 'calc.html', context=data)

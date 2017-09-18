@@ -16,8 +16,8 @@
                 <form method="post" action="/calc/calculate/">
                 {% csrf_token %}
                     <div>
-                        <label for="number">Ilość stron
-                            <input type="number" name="number" class="input-alternate" placeholder="Ilość stron" value="{{ number_of_pages }}">
+                        <label for="number_of_pages">Ilość stron
+                            <input type="number" name="number_of_pages" class="input-alternate" placeholder="Ilość stron" value="{{ xero_cost.number_of_pages }}">
                         </label>
                     </div>
                     <div>
@@ -41,7 +41,7 @@
 </label>
                     </div>
                 </form>
-            <div><h2>Kwota: {{ total_cost }} zł</h2></div>
+            <div><h2>Kwota: {{ xero_cost.calc_xero_cost_without_bind }} zł</h2></div>
             </div>
         </div>
     </div>
