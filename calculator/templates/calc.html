@@ -22,26 +22,33 @@
                     </div>
                     <div>
                         <label for="cost_per_page" >Koszt 1 strony ksero
-                        <button type="submit"
-                                class="{% if cost_per_page == 0.06 %}btn btn-red{% else %}btn btn-amber"{% endif %}
-                                value="6" name="cost_per_page">6 gr
-                        </button>
-                        <button type="submit"
-                                class="{% if cost_per_page == 0.07 %}btn btn-red{% else %}btn btn-amber"{% endif %}
-                                value="7" name="cost_per_page">7 gr
-                        </button>
-                        <button type="submit"
-                                class="{% if cost_per_page == 0.08 %}btn btn-red{% else %}btn btn-amber"{% endif %}
-                                value="8" name="cost_per_page">8 gr
-                        </button>
-                        <button type="submit"
-                                class="{% if cost_per_page == 0.09 %}btn btn-red{% else %}btn btn-amber"{% endif %}
-                                value="9" name="cost_per_page">9 gr
-                        </button>
-</label>
+                        {% for cost in xero_cost.XERO_COSTS %}
+                        <input type="radio" onclick="this.form.submit()"
+                                class="{% if cost == xero_cost.cost_per_page_in_grosz %}btn btn-red{% else %}btn btn-amber{% endif %}"
+                               {% if cost == xero_cost.cost_per_page_in_grosz %}checked{% endif %}
+                               value="{{ cost }}" name="cost_per_page">{{ cost }} gr
+                        </input>
+                        {% endfor %}
+                        </label>
                     </div>
+                    <div>
+                        <label for="cost_per_page" >Koszt bindu
+                        {% for cost in xero_cost.BIND_COSTS %}
+                        <input type="checkbox"
+                                class="{% if cost == xero_cost.bind_cost %}btn btn-red{% else %}btn btn-amber{% endif %}"
+                                {% if cost == xero_cost.bind_cost %}checked{% endif %}
+                                value="{{ cost }}" name="bind_cost">{{ cost }} zł
+                        </input>
+                        {% endfor %}
+                        </label>
+                    </div>
+                <button type="submit">Policz</button>
                 </form>
-            <div><h2>Kwota: {{ xero_cost.calc_xero_cost_without_bind }} zł</h2></div>
+
+            <div>
+                <h2>Kwota bez bindu: {{ xero_cost.calc_xero_cost_without_bind }} zł</h2>
+                <h2>Kwota z bindem: {{ xero_cost.calc_xero_cost_with_bind }} zł</h2>
+            </div>
             </div>
         </div>
     </div>
