@@ -15,30 +15,65 @@
                 <h1>KALKULATOR</h1>
                 <form method="post" action="/calc/calculate/">
                 {% csrf_token %}
+
                     <div>
                         <label for="number_of_pages">Ilość stron
                             <input type="number" name="number_of_pages" class="input-alternate" placeholder="Ilość stron" value="{{ xero_cost.number_of_pages }}">
                         </label>
                     </div>
+
                     <div>
                         <label for="cost_per_page" >Koszt 1 strony ksero
                         {% for cost in xero_cost.XERO_COSTS %}
-                        <input type="radio" onclick="this.form.submit()"
+                        <input type="radio"
                                 class="{% if cost == xero_cost.cost_per_page_in_grosz %}btn btn-red{% else %}btn btn-amber{% endif %}"
                                {% if cost == xero_cost.cost_per_page_in_grosz %}checked{% endif %}
                                value="{{ cost }}" name="cost_per_page">{{ cost }} gr
-                        </input>
+
                         {% endfor %}
                         </label>
                     </div>
                     <div>
                         <label for="cost_per_page" >Koszt bindu
                         {% for cost in xero_cost.BIND_COSTS %}
-                        <input type="checkbox"
+                        <input type="radio"
                                 class="{% if cost == xero_cost.bind_cost %}btn btn-red{% else %}btn btn-amber{% endif %}"
                                 {% if cost == xero_cost.bind_cost %}checked{% endif %}
                                 value="{{ cost }}" name="bind_cost">{{ cost }} zł
-                        </input>
+
+                        {% endfor %}
+                        </label>
+                    </div>
+                <button type="submit">Policz</button>
+                </form>
+             <form action="/calc/calculate-book/" method="post">
+             {% csrf_token %}
+                    <div>
+                        <label for="number_of_pages">Ilość stron w książce
+                            <input type="number" name="book_pages_arabic" class="input-alternate" placeholder="Ilość stron" value="{% if xero_cost.book_pages_arabic %}{{ xero_cost.book_pages_arabic }}{% else %}0{% endif %}">
+                            <input type="number" name="book_pages_roman" class="input-alternate" placeholder="Ilość stron" value="{% if xero_cost.book_pages_roman %}{{ xero_cost.book_pages_roman }}{% else %}0{% endif %}">
+                        </label>
+                    </div>
+
+                    <div>
+                        <label for="cost_per_page" >Koszt 1 strony ksero
+                        {% for cost in xero_cost.XERO_COSTS %}
+                        <input type="radio"
+                                class="{% if cost == xero_cost.cost_per_page_in_grosz %}btn btn-red{% else %}btn btn-amber{% endif %}"
+                               {% if cost == xero_cost.cost_per_page_in_grosz %}checked{% endif %}
+                               value="{{ cost }}" name="cost_per_page">{{ cost }} gr
+
+                        {% endfor %}
+                        </label>
+                    </div>
+                    <div>
+                        <label for="cost_per_page" >Koszt bindu
+                        {% for cost in xero_cost.BIND_COSTS %}
+                        <input type="radio"
+                                class="{% if cost == xero_cost.bind_cost %}btn btn-red{% else %}btn btn-amber{% endif %}"
+                                {% if cost == xero_cost.bind_cost %}checked{% endif %}
+                                value="{{ cost }}" name="bind_cost">{{ cost }} zł
+
                         {% endfor %}
                         </label>
                     </div>
@@ -46,6 +81,7 @@
                 </form>
 
             <div>
+                <h3>Ilość stron ksera: {{ xero_cost.number_of_pages }}</h3>
                 <h2>Kwota bez bindu: {{ xero_cost.calc_xero_cost_without_bind }} zł</h2>
                 <h2>Kwota z bindem: {{ xero_cost.calc_xero_cost_with_bind }} zł</h2>
             </div>
