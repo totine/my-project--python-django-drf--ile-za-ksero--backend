@@ -84,6 +84,23 @@
                 <h3>Ilość stron ksera: {{ xero_cost.number_of_pages }}</h3>
                 <h2>Kwota bez bindu: {{ xero_cost.calc_xero_cost_without_bind }} zł</h2>
                 <h2>Kwota z bindem: {{ xero_cost.calc_xero_cost_with_bind }} zł</h2>
+                <a class="btn" href="/calc/add">Dodaj</a>
+            </div>
+            <div>
+            <table class="table">
+                {% for xero in xero_list.get_all_xero_calcs %}
+                    <tr>
+                    <td>{{ xero.name }}</td>
+                    <td>{{ xero.number_of_pages }}</td>
+                    <td>{{ xero.cost_per_page_in_grosz }}</td>
+                    <td>{{ xero.bind_cost }}</td>
+                    <td>{{ xero.calc_xero_cost_without_bind }}</td>
+                    <td>{{ xero.calc_xero_cost_with_bind }}</td>
+                    </tr>
+                {% endfor %}
+
+            </table>
+            <div>Razem: {{ xero_list.get_all_xero_pages }}</div>
             </div>
             </div>
         </div>

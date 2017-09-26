@@ -2,24 +2,49 @@ import math
 from django.db import models
 
 
+class XeroList(models.Model):
+
+    def get_all_xero_pages(self):
+        return sum([cost.number_of_pages for cost in self.get_all_xero_calcs()])
+
+    def get_all_bind_cost(self):
+        return sum([cost.bind_cost for cost in self.get_all_xero_calcs()])
+
+    def get_all_cost_without_bind(self):
+        return sum([cost.calc_xero_cost_without_bind for cost in self.get_all_xero_calcs()])
+
+    def get_all_cost_with_bind(self):
+        return sum([cost.calc_xero_cost_with_bind for cost in self.get_all_xero_calcs()])
+
+    def add(self, xero_cost):
+        xero_cost.xero_cost_list = self
+
+    def get_all_xero_calcs(self):
+        return [XeroCalc.get_xero_calc_by_id(id_["id"]) for id_ in self.xerocalc_set.values("id")]
+
+
 class XeroCalc(models.Model):
+
     XERO_COSTS = [6, 7, 8, 9, 10]
-    BIND_COSTS = [1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6]
+    BIND_COSTS = [0, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6]
     name = models.CharField(max_length=200, blank=True, null=True, default="")
-
-    cost_per_page = models.DecimalField(max_digits=2, decimal_places=2)
-    bind_cost = models.DecimalField(max_digits=3, decimal_places=2)
-
-    class Meta:
-        managed = False
+    xero_cost_list = models.ForeignKey(XeroList, null=True)
+    cost_per_page = models.DecimalField(max_digits=2, decimal_places=2, default=0)
+    bind_cost = models.DecimalField(max_digits=3, decimal_places=2, default=0)
 
     @property
     def number_of_pages(self):
-        return None
+        return 0
 
     @property
     def cost_per_page_in_grosz(self):
-        return int(self.cost_per_page * 100)
+        return int(self.cost_per_page * 100) if self.cost_per_page else 0
+
+    @classmethod
+    def get_xero_calc_by_id(cls, id_):
+        calcs = cls.__subclasses__()
+        return [calc.objects.get(xerocalc_ptr_id=id_) for calc in calcs
+                if calc.objects.filter(xerocalc_ptr_id=id_).exists()][0]
 
     def calc_xero_cost_without_bind(self):
         return self.number_of_pages * self.cost_per_page
@@ -47,7 +72,3 @@ class XeroBookCalc(XeroCalc):
     @property
     def number_of_pages(self):
         return int(math.ceil(self.all_book_pages/2))
-
-
-
-
