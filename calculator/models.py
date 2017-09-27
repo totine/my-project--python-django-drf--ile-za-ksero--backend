@@ -54,11 +54,24 @@ class XeroCalc(models.Model):
 
 
 class XeroSimpleCalc(XeroCalc):
-    number_of_pages_from_form = models.PositiveIntegerField(default=0)
+
+    number_of_cards_from_form = models.PositiveIntegerField(default=0)
+    is_one_sided = models.BooleanField(default=False)
+    is_two_sided = models.BooleanField(default=False)
+    is_mix_with_two_sided_advantage = models.BooleanField(default=False)
+    is_mix_with_one_sided_advantage = models.BooleanField(default=False)
+    two_sided_pages_in_mix = models.PositiveIntegerField(default=0)
+    one_sided_pages_in_mix = models.PositiveIntegerField(default=0)
 
     @property
     def number_of_pages(self):
-        return self.number_of_pages_from_form
+        base_pages = self.number_of_cards_from_form * (2 if self.is_two_sided or self.is_mix_with_two_sided_advantage else 1)
+        additional_pages = 0 if not self.is_mix else (int(self.two_sided_pages_in_mix) - self.one_sided_pages_in_mix)
+        return base_pages - additional_pages
+
+    @property
+    def is_mix(self):
+        return self.is_mix_with_two_sided_advantage or self.is_mix_with_one_sided_advantage
 
 
 class XeroBookCalc(XeroCalc):

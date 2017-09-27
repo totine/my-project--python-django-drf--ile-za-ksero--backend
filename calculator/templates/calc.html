@@ -15,13 +15,26 @@
                 <h1>KALKULATOR</h1>
                 <form method="post" action="/calc/calculate/">
                 {% csrf_token %}
-
-                    <div>
-                        <label for="number_of_pages">Ilość stron
-                            <input type="number" name="number_of_pages" class="input-alternate" placeholder="Ilość stron" value="{{ xero_cost.number_of_pages }}">
+                 <div>
+                        <label for="name">Nazwa
+                            <input type="text" name="name" class="input-alternate" placeholder="Nazwa (opcjonalnie)" value="{{ xero_cost.name }}">
                         </label>
                     </div>
-
+                    <div>
+                        <label for="number_of_pages">Ilość kartek
+                            <input type="number" name="number_of_pages" class="input-alternate" placeholder="Ilość stron" value="{{ xero_cost.number_of_cards_from_form }}">
+                        </label>
+                    </div>
+                    <div>
+                        <label for="sides">1- czy 2-stronne
+                            <input type="radio" name="sides" value="onesided" onchange="hidePagesInputs()" checked> Wszystkie 1-stronne
+                            <input type="radio" name="sides" value="twosided" onchange="hidePagesInputs()"> Wszystkie 2-stronne
+                            <input type="radio" name="sides" value="mixonesided" onchange="showPagesInput('twosided-in-mixonesided')"> Przewaga 1-stronnych
+                            <input type="number" id="twosided-in-mixonesided" name="twosided-in-mixonesided" hidden>
+                            <input type="radio" name="sides" value="mixtwosided" onchange="showPagesInput('onesided-in-mixtwosided')"> Przewaga 2-stronnych
+                            <input type="number" id="onesided-in-mixtwosided" name="onesided-in-mixtwosided" hidden>
+                        </label>
+                    </div>
                     <div>
                         <label for="cost_per_page" >Koszt 1 strony ksero
                         {% for cost in xero_cost.XERO_COSTS %}
@@ -48,6 +61,11 @@
                 </form>
              <form action="/calc/calculate-book/" method="post">
              {% csrf_token %}
+                 <div>
+                        <label for="name">Nazwa
+                            <input type="text" name="name" class="input-alternate" placeholder="Nazwa (opcjonalnie)" value="{{ xero_cost.name }}">
+                        </label>
+                    </div>
                     <div>
                         <label for="number_of_pages">Ilość stron w książce
                             <input type="number" name="book_pages_arabic" class="input-alternate" placeholder="Ilość stron" value="{% if xero_cost.book_pages_arabic %}{{ xero_cost.book_pages_arabic }}{% else %}0{% endif %}">
@@ -84,9 +102,11 @@
                 <h3>Ilość stron ksera: {{ xero_cost.number_of_pages }}</h3>
                 <h2>Kwota bez bindu: {{ xero_cost.calc_xero_cost_without_bind }} zł</h2>
                 <h2>Kwota z bindem: {{ xero_cost.calc_xero_cost_with_bind }} zł</h2>
-                <a class="btn" href="/calc/add">Dodaj</a>
+                <a class="btn btn-red" href="/calc/add">Dodaj</a>
             </div>
             <div>
+            <h2>Lista kser</h2>
+            <a href="/calc/reset">Zresetuj</a>
             <table class="table">
                 {% for xero in xero_list.get_all_xero_calcs %}
                     <tr>
@@ -96,6 +116,9 @@
                     <td>{{ xero.bind_cost }}</td>
                     <td>{{ xero.calc_xero_cost_without_bind }}</td>
                     <td>{{ xero.calc_xero_cost_with_bind }}</td>
+                    <td>
+                        <a href="/calc/costs/{{xero.id }}/delete"><i class="material-icon"></i>delete</a>
+                    </td>
                     </tr>
                 {% endfor %}
 
@@ -105,4 +128,21 @@
             </div>
         </div>
     </div>
+    <script>
+    function showPagesInput(id) {
+        input = document.getElementById(id);
+        input.removeAttribute('hidden');
+        id == "onesided-in-mixtwosided" ? document.getElementById('twosided-in-mixonesided').setAttribute("hidden", true) :
+            document.getElementById('onesided-in-mixtwosided').setAttribute("hidden", true);
+    }
+
+    function hidePagesInputs() {
+        var oneSided = document.getElementById('twosided-in-mixonesided');
+            oneSided.setAttribute("hidden", true);
+            oneSided.value = 0;
+        var twoSided = document.getElementById('onesided-in-mixtwosided')
+            twoSided.setAttribute("hidden", true);
+            twoSided.value = 0;
+    }
+    </script>
 {% endblock %}
