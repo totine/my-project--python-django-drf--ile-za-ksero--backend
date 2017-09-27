@@ -27,12 +27,22 @@
                     </div>
                     <div>
                         <label for="sides">1- czy 2-stronne
-                            <input type="radio" name="sides" value="onesided" onchange="hidePagesInputs()" checked> Wszystkie 1-stronne
-                            <input type="radio" name="sides" value="twosided" onchange="hidePagesInputs()"> Wszystkie 2-stronne
-                            <input type="radio" name="sides" value="mixonesided" onchange="showPagesInput('twosided-in-mixonesided')"> Przewaga 1-stronnych
-                            <input type="number" id="twosided-in-mixonesided" name="twosided-in-mixonesided" hidden>
-                            <input type="radio" name="sides" value="mixtwosided" onchange="showPagesInput('onesided-in-mixtwosided')"> Przewaga 2-stronnych
-                            <input type="number" id="onesided-in-mixtwosided" name="onesided-in-mixtwosided" hidden>
+                            <input type="radio" name="sides" value="onesided" onchange="hidePagesInputs()"
+                                   {% if xero_cost.is_one_sided %}checked{% endif %}> Wszystkie 1-stronne
+                            <input type="radio" name="sides" value="twosided" onchange="hidePagesInputs()"
+                                   {% if xero_cost.is_two_sided %}checked{% endif %}> Wszystkie 2-stronne
+                            <input type="radio" name="sides" value="mixonesided"
+                                   onchange="showPagesInput('twosided-in-mixonesided')"
+                                   {% if xero_cost.is_one_sided %}checked{% endif %}> Przewaga 1-stronnych
+                            <input type="number" id="twosided-in-mixonesided" name="twosided-in-mixonesided"
+                                   {% if not xero_cost.is_mix_with_one_sided_advantage %}hidden{% endif %}
+                                   value="{{ xero_cost.two_sided_pages_in_mix }}">
+                            <input type="radio" name="sides" value="mixtwosided"
+                                   onchange="showPagesInput('onesided-in-mixtwosided')"
+                                   {% if xero_cost.is_one_sided %}checked{% endif %}> Przewaga 2-stronnych
+                            <input type="number" id="onesided-in-mixtwosided" name="onesided-in-mixtwosided"
+                                   {% if not xero_cost.is_mix_with_two_sided_advantage %}hidden{% endif %}
+                                    value="{{ xero_cost.one_sided_pages_in_mix }}">
                         </label>
                     </div>
                     <div>
@@ -102,6 +112,7 @@
                 <h3>Ilość stron ksera: {{ xero_cost.number_of_pages }}</h3>
                 <h2>Kwota bez bindu: {{ xero_cost.calc_xero_cost_without_bind }} zł</h2>
                 <h2>Kwota z bindem: {{ xero_cost.calc_xero_cost_with_bind }} zł</h2>
+                <h3>Cena bindu: {{ xero_cost.bind_cost }} (sugerowany koszt: {{ suggested_bind_price }} zł)</h3>
                 <a class="btn btn-red" href="/calc/add">Dodaj</a>
             </div>
             <div>

@@ -5,17 +5,20 @@ from django.shortcuts import render, HttpResponse, redirect
 
 # Create your views here.
 from calculator.models import XeroCalc, XeroSimpleCalc, XeroBookCalc, XeroList
+from booklist.models import Bind
 
 
 def calculator(request):
+    bind = Bind.objects.get(name="main")
     xero_cost = XeroSimpleCalc() if not request.session["xero_cost_id"] else XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"])
     try:
         xero_list = XeroList.objects.get(pk=request.session["xero_list_id"])
     except:
         xero_list = XeroList()
     xero_list.save()
+    suggested_bind_price = bind.get_bind_price(xero_cost.number_of_cards)
     request.session["xero_list_id"] = xero_list.id
-    data = {"xero_cost": xero_cost, "xero_list": xero_list}
+    data = {"xero_cost": xero_cost, "xero_list": xero_list, "suggested_bind_price": suggested_bind_price}
     return render(request, 'calc.html', context=data)
 
 
@@ -25,8 +28,8 @@ def calculate(request):
     cost_per_page = Decimal(request.POST.get('cost_per_page', 0))/100
     number_of_pages = int(request.POST['number_of_pages'])
     sides_dict[request.POST.get('sides', '')] = True
-    number_of_one_sided_pages_in_two_sided_mix = int(request.POST['onesided-in-mixtwosided'])
-    number_of_two_sided_pages_in_one_sided_mix = int(request.POST['twosided-in-mixonesided'])
+    number_of_one_sided_pages_in_two_sided_mix = int(request.POST['onesided-in-mixtwosided']) if request.POST['onesided-in-mixtwosided'] else 0
+    number_of_two_sided_pages_in_one_sided_mix = int(request.POST['twosided-in-mixonesided']) if request.POST['twosided-in-mixonesided'] else 0
     bind_cost = Decimal(request.POST.get('bind_cost', 0))
     xero_cost = XeroSimpleCalc()
     xero_cost.cost_per_page = cost_per_page
@@ -37,8 +40,8 @@ def calculate(request):
     xero_cost.is_two_sided = sides_dict["twosided"]
     xero_cost.is_mix_with_one_sided_advantage = sides_dict["mixonesided"]
     xero_cost.is_mix_with_two_sided_advantage = sides_dict["mixtwosided"]
-    xero_cost.one_sided_pages_in_mix = number_of_one_sided_pages_in_two_sided_mix if number_of_one_sided_pages_in_two_sided_mix else 0
-    xero_cost.two_sided_pages_in_mix = number_of_two_sided_pages_in_one_sided_mix if number_of_two_sided_pages_in_one_sided_mix else 0
+    xero_cost.one_sided_pages_in_mix = number_of_one_sided_pages_in_two_sided_mix if number_of_one_sided_pages_in_two_sided_mix and xero_cost.is_mix_with_two_sided_advantage else 0
+    xero_cost.two_sided_pages_in_mix = number_of_two_sided_pages_in_one_sided_mix if number_of_two_sided_pages_in_one_sided_mix and xero_cost.is_mix_with_one_sided_advantage else 0
     xero_cost.save()
     xero_list = XeroList.objects.get(pk=request.session["xero_list_id"]) if "xero_list_id" in request.session else XeroList()
     request.session["xero_list_id"] = xero_list.id
