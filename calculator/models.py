@@ -66,7 +66,7 @@ class XeroSimpleCalc(XeroCalc):
     @property
     def number_of_pages(self):
         base_pages = self.number_of_cards_from_form * (2 if self.is_two_sided or self.is_mix_with_two_sided_advantage else 1)
-        additional_pages = 0 if not self.is_mix else (int(self.two_sided_pages_in_mix) - self.one_sided_pages_in_mix)
+        additional_pages = 0 if not self.is_mix else (self.two_sided_pages_in_mix - self.one_sided_pages_in_mix)
         return base_pages - additional_pages
 
     @property
