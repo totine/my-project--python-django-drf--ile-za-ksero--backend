@@ -1,6 +1,23 @@
 import math
 from django.db import models
 
+from booklist.models import Book
+
+class Bind(models.Model):
+    name = models.CharField(max_length=50)
+
+    def get_bind_price(self, number_of_pages):
+        range_for_pages = self.bindrange_set.filter(range_top__gte=number_of_pages).first()
+        return range_for_pages.range_price
+
+
+class BindRange(models.Model):
+    bind = models.ForeignKey(Bind)
+    range_top = models.PositiveIntegerField()
+    range_price = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+
+    class Meta:
+        ordering = ['range_top']
 
 class XeroList(models.Model):
 
@@ -33,6 +50,7 @@ class XeroCalc(models.Model):
     bind_cost = models.DecimalField(max_digits=3, decimal_places=2, default=0)
     is_one_sided = models.BooleanField(default=False)
     is_two_sided = models.BooleanField(default=False)
+    bind_ranges = models.ForeignKey(Bind, default=None)
 
     @property
     def number_of_pages(self):
@@ -45,6 +63,10 @@ class XeroCalc(models.Model):
     @property
     def cost_per_page_in_grosz(self):
         return int(self.cost_per_page * 100) if self.cost_per_page else 0
+
+    @property
+    def suggested_bind_cost(self):
+        return self.bind_ranges.get_bind_price(self.number_of_cards)
 
     @classmethod
     def get_xero_calc_by_id(cls, id_):
@@ -97,3 +119,22 @@ class XeroBookCalc(XeroCalc):
     @property
     def number_of_cards(self):
         return self.number_of_pages if self.is_one_sided else int(math.ceil(self.number_of_pages/2))
+
+
+class XeroBaseBookCalc(XeroCalc):
+
+    book = models.ForeignKey(Book, default=None)
+    xero_pages_real = models.IntegerField(default=0)
+
+    @property
+    def book_pages_arabic(self):
+        return self.book.number_of_pages.arabic
+
+    @property
+    def book_pages_roman(self):
+        return self.book.number_of_pages.roman
+
+    @property
+    def number_of_cards_real(self):
+        return int(math.ceil(self.xero_pages_real/2))
+

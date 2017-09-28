@@ -4,12 +4,15 @@ from django.shortcuts import render, HttpResponse, redirect
 
 
 # Create your views here.
-from calculator.models import XeroCalc, XeroSimpleCalc, XeroBookCalc, XeroList
-from booklist.models import Bind
+from calculator.models import XeroCalc, XeroSimpleCalc, XeroBookCalc, XeroList, Bind
 
 
 def calculator(request):
-    bind = Bind.objects.get(name="main")
+    try:
+        bind = Bind.objects.get(name="main")
+    except:
+        bind = Bind()
+
     xero_cost = XeroSimpleCalc() if not request.session["xero_cost_id"] else XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"])
     try:
         xero_list = XeroList.objects.get(pk=request.session["xero_list_id"])

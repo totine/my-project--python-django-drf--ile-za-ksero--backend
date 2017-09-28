@@ -143,58 +143,8 @@ class Author(models.Model):
         return self.author.getFullName() + (" (red.)" if self.is_editor else "")
 
 
-class Bind(models.Model):
-    name = models.CharField(max_length=50)
-
-    def get_bind_price(self, number_of_pages):
-        range_for_pages = self.bindrange_set.filter(range_top__gte=number_of_pages).first()
-        return range_for_pages.range_price
 
 
-class BindRange(models.Model):
-    bind = models.ForeignKey(Bind)
-    range_top = models.PositiveIntegerField()
-    range_price = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-
-    class Meta:
-        ordering = ['range_top']
-
-
-class XeroBook(models.Model):
-    book = models.OneToOneField(Book)
-    xero_pages = models.IntegerField(default=0)
-    actual_price = None
-    actual_bind = None
-
-
-    @property
-    def xero_cards(self):
-        return math.ceil(self.xero_pages/2)
-
-    def set_actual_price(self, price):
-        self.actual_price = price
-
-    def set_actual_bind(self, bind):
-        self.actual_bind = bind
-
-    @property
-    def bind_price(self):
-        return self.actual_bind.get_bind_price(self.xero_cards)
-
-    @property
-    def xero_price(self):
-        return round(Decimal(self.xero_pages * self.actual_price), 2)
-
-    @property
-    def xero_price_with_bind(self):
-        return self.bind_price + self.xero_price
-
-
-def create_xero_book(sender, **kwargs):
-    if kwargs['created']:
-        xero_book = XeroBook.objects.create(book=kwargs['instance'])
-
-post_save.connect(create_xero_book, sender=Book)
 
 
 
