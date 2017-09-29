@@ -28,10 +28,10 @@ class XeroList(models.Model):
         return sum([cost.bind_cost for cost in self.get_all_xero_calcs()])
 
     def get_all_cost_without_bind(self):
-        return sum([cost.calc_xero_cost_without_bind for cost in self.get_all_xero_calcs()])
+        return sum([cost.calc_xero_cost_without_bind() for cost in self.get_all_xero_calcs()])
 
     def get_all_cost_with_bind(self):
-        return sum([cost.calc_xero_cost_with_bind for cost in self.get_all_xero_calcs()])
+        return sum([cost.calc_xero_cost_with_bind() for cost in self.get_all_xero_calcs()])
 
     def add(self, xero_cost):
         xero_cost.xero_cost_list = self
@@ -72,7 +72,7 @@ class XeroCalc(models.Model):
     def get_xero_calc_by_id(cls, id_):
         calcs = cls.__subclasses__()
         return [calc.objects.get(xerocalc_ptr_id=id_) for calc in calcs
-                if calc.objects.filter(xerocalc_ptr_id=id_).exists()][0]
+                if calc.objects.filter(xerocalc_ptr_id=id_).exists()][0] if XeroCalc.objects.filter(id=id_).exists() else None
 
     def calc_xero_cost_without_bind(self):
         return self.number_of_pages * self.cost_per_page
@@ -88,12 +88,13 @@ class XeroSimpleCalc(XeroCalc):
     is_mix_with_one_sided_advantage = models.BooleanField(default=False)
     two_sided_pages_in_mix = models.PositiveIntegerField(default=0)
     one_sided_pages_in_mix = models.PositiveIntegerField(default=0)
+    is_cards_in_form = models.BooleanField(default=False)
 
     @property
     def number_of_pages(self):
         base_pages = self.number_of_cards_from_form * (2 if self.is_two_sided or self.is_mix_with_two_sided_advantage else 1)
         additional_pages = 0 if not self.is_mix else (self.two_sided_pages_in_mix - self.one_sided_pages_in_mix)
-        return base_pages - additional_pages
+        return base_pages + additional_pages
 
     @property
     def number_of_cards(self):

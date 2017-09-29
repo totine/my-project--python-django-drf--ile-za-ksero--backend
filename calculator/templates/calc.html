@@ -21,10 +21,15 @@
                         </label>
                     </div>
                     <div>
-                        <label for="number_of_pages">Ilość kartek
-                            <input type="number" name="number_of_pages" class="input-alternate" placeholder="Ilość stron" value="{{ xero_cost.number_of_cards_from_form }}">
+                        <label for="number_of_pages_or_cards">Ilość kartek lub stron
+                            <input type="number" name="number_of_pages_or_cards" class="input-alternate" placeholder="Ilość stron lub kartek" value= {% if xero_cost.is_cards_in_form %} "{{ xero_cost.number_of_cards }}" {% else %}  "{{ xero_cost.number_of_pages }}" {% endif %}>
                         </label>
                     </div>
+                <div>
+                    <input type="radio" name="pages_or_cards" value="cards" {% if xero_cost.is_cards_in_form %}checked{% endif %}>kartki
+                    <input type="radio" name="pages_or_cards" value="pages" {% if not xero_cost.is_cards_in_form %}checked{% endif %}>strony
+
+                </div>
                     <div>
                         <label for="sides">1- czy 2-stronne
                             <input type="radio" name="sides" value="onesided" onchange="hidePagesInputs()"
@@ -33,13 +38,13 @@
                                    {% if xero_cost.is_two_sided %}checked{% endif %}> Wszystkie 2-stronne
                             <input type="radio" name="sides" value="mixonesided"
                                    onchange="showPagesInput('twosided-in-mixonesided')"
-                                   {% if xero_cost.is_one_sided %}checked{% endif %}> Przewaga 1-stronnych
+                                   {% if xero_cost.is_mix_with_one_sided_advantage %}checked{% endif %}> Przewaga 1-stronnych
                             <input type="number" id="twosided-in-mixonesided" name="twosided-in-mixonesided"
                                    {% if not xero_cost.is_mix_with_one_sided_advantage %}hidden{% endif %}
                                    value="{{ xero_cost.two_sided_pages_in_mix }}">
                             <input type="radio" name="sides" value="mixtwosided"
                                    onchange="showPagesInput('onesided-in-mixtwosided')"
-                                   {% if xero_cost.is_one_sided %}checked{% endif %}> Przewaga 2-stronnych
+                                   {% if xero_cost.is_mix_with_two_sided_advantage %}checked{% endif %}> Przewaga 2-stronnych
                             <input type="number" id="onesided-in-mixtwosided" name="onesided-in-mixtwosided"
                                    {% if not xero_cost.is_mix_with_two_sided_advantage %}hidden{% endif %}
                                     value="{{ xero_cost.one_sided_pages_in_mix }}">
@@ -119,22 +124,38 @@
             <h2>Lista kser</h2>
             <a href="/calc/reset">Zresetuj</a>
             <table class="table">
+            <tr>
+                <th>Nazwa</th>
+                <th>Ilość stron</th>
+                <th>Cena za stronę ksera</th>
+                <th>Koszt bindu</th>
+                <th>Cały koszt bez bindu</th>
+                <th>Cały koszt z bindem</th>
+            </tr>
                 {% for xero in xero_list.get_all_xero_calcs %}
                     <tr>
                     <td>{{ xero.name }}</td>
                     <td>{{ xero.number_of_pages }}</td>
-                    <td>{{ xero.cost_per_page_in_grosz }}</td>
-                    <td>{{ xero.bind_cost }}</td>
-                    <td>{{ xero.calc_xero_cost_without_bind }}</td>
-                    <td>{{ xero.calc_xero_cost_with_bind }}</td>
+                    <td>{{ xero.cost_per_page_in_grosz }} gr</td>
+                    <td>{{ xero.bind_cost }} zł</td>
+                    <td>{{ xero.calc_xero_cost_without_bind }} zł</td>
+                        <td><b>{{ xero.calc_xero_cost_with_bind }} zł</b></td>
                     <td>
                         <a href="/calc/costs/{{xero.id }}/delete"><i class="material-icon"></i>delete</a>
                     </td>
                     </tr>
                 {% endfor %}
+                    <tr>
+                        <td>Razem:</td>
+                        <td>{{ xero_list.get_all_xero_pages }}</td>
+                        <td><br></td>
+                        <td>{{ xero_list.get_all_bind_cost }} zł</td>
+                        <td>{{ xero_list.get_all_cost_without_bind }} zł</td>
+                        <td><b>{{ xero_list.get_all_cost_with_bind }} zł</b></td>
+                    </tr>
 
             </table>
-            <div>Razem: {{ xero_list.get_all_xero_pages }}</div>
+
             </div>
             </div>
         </div>
