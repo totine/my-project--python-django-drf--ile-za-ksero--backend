@@ -1,0 +1,22 @@
+                    <div>
+                        <label for="cost_per_page" >Koszt 1 strony ksero
+                        {% for cost in xero_cost.XERO_COSTS %}
+                        <input type="radio"
+                                class="{% if cost == xero_cost.cost_per_page_in_grosz %}btn btn-red{% else %}btn btn-amber{% endif %}"
+                               {% if cost == xero_cost.cost_per_page_in_grosz %}checked{% endif %}
+                               value="{{ cost }}" name="cost_per_page">{{ cost }} gr
+
+                        {% endfor %}
+                        </label>
+                    </div>
+                    <div>
+                        <label for="cost_per_page" >Koszt bindu
+                        {% for cost in xero_cost.BIND_COSTS %}
+                        <input type="radio"
+                                class="{% if cost == xero_cost.bind_cost %}btn btn-red{% else %}btn btn-amber{% endif %}"
+                                {% if cost == xero_cost.bind_cost %}checked{% endif %}
+                                value="{{ cost }}" name="bind_cost">{{ cost }} zł
+
+                        {% endfor %}
+                        </label>
+                    </div>
