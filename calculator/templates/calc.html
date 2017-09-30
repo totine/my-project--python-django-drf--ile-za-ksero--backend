@@ -9,146 +9,203 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col">
-                <h1>Ile za ksero?</h1>
-                <p>Masz do skserowania książkę? Sprawdź ile będzie Cię to kosztować.</p>
-                <p>Chcesz sprzedać niepotrzebne już kserówki? Ułatw sobie wycenę.</p>
-                <h1>KALKULATOR</h1>
-            <h2>Wybierz rodzaj kalkulatora</h2>
-                <h2>Znam ilość stron lub kartek</h2>
-                <form method="post" action="/calc/calculate/">
-                    {% csrf_token %}
-                    {% include 'elements/name-input.html' %}
-                    <div>
-                        <label for="number_of_pages_or_cards">Ilość kartek lub stron
-                            <input type="number" name="number_of_pages_or_cards" class="input-alternate"
-                                   placeholder="Ilość stron lub kartek"
-                                   value= {% if xero_cost.is_cards_in_form %} "{{ xero_cost.number_of_cards }}" {% else %}
-                                       "{{ xero_cost.number_of_pages }}" {% endif %}>
-                        </label>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h1>Ile za ksero?</h1>
+                        </div>
+                        <div class="card-text">
+                            <p>Masz do skserowania książkę? Sprawdź ile będzie Cię to kosztować.</p>
+                            <p>Chcesz sprzedać niepotrzebne już kserówki? Ułatw sobie wycenę.</p>
+                        </div>
                     </div>
-                    <div>
-                        <input type="radio" name="pages_or_cards" value="cards"
-                               {% if xero_cost.is_cards_in_form %}checked{% endif %}>kartki
-                        <input type="radio" name="pages_or_cards" value="pages"
-                               {% if not xero_cost.is_cards_in_form %}checked{% endif %}>strony
-                    </div>
-                    {% include 'elements/sides-choice-input.html' %}
-                    {% include 'elements/xero-bind-price-input.html' %}
-                    {% include 'elements/submit-button.html' %}
-                </form>
-                <h2>Znam ilość stron w oryginalnej książce</h2>
-                <form action="/calc/calculate-book/" method="post">
-                    {% csrf_token %}
-                    {% include 'elements/name-input.html' %}
-                    <div>
-                    <p>Ilość stron w książce</p>
-                    <div>
-                        <label for="book_pages_arabic">numeracja arabska (podstawowa)
-                            <input type="number" name="book_pages_arabic" class="input-alternate"
-                                   placeholder="Ilość stron" value="
-                                    {% if xero_cost.book_pages_arabic %}{{ xero_cost.book_pages_arabic }}{% else %}0{% endif %}">
-                        </label>
-                    </div>
-                    <div>
-                    <label for="book_pages_roman">numeracja rzymska (na początku)
-                            <input type="number" name="book_pages_roman" class="input-alternate"
-                                   placeholder="Ilość stron" value="
-                                    {% if xero_cost.book_pages_roman %}{{ xero_cost.book_pages_roman }}{% else %}0{% endif %}">
-                        </label>
-                    </div>
-                    </div>
-                    {% include 'elements/sides-choice-input.html' %}
-                    <div>
-                        <label for="cost_per_page">Koszt 1 strony ksero
-                            {% for cost in xero_cost.XERO_COSTS %}
-                                <input type="radio"
-                                       class="{% if cost == xero_cost.cost_per_page_in_grosz %}btn btn-red{% else %}btn btn-amber{% endif %}"
-                                       {% if cost == xero_cost.cost_per_page_in_grosz %}checked{% endif %}
-                                       value="{{ cost }}" name="cost_per_page">{{ cost }} gr
-                            {% endfor %}
-                        </label>
-                    </div>
-                    <div>
-                        <label for="cost_per_page">Koszt bindu
-                            {% for cost in xero_cost.BIND_COSTS %}
-                                <input type="radio"
-                                       class="{% if cost == xero_cost.bind_cost %}btn btn-red{% else %}btn btn-amber{% endif %}"
-                                       {% if cost == xero_cost.bind_cost %}checked{% endif %}
-                                       value="{{ cost }}" name="bind_cost">{{ cost }} zł
-                            {% endfor %}
-                        </label>
-                    </div>
-                    {% include 'elements/submit-button.html' %}
-                </form>
-                <h2>Mogę zważyć</h2>
-                <form action="/calc/by-weight/" method="post">
-                    {% csrf_token %}
-                    {% include 'elements/name-input.html' %}
-                     <div>
-                        <label for="weight">Waga w gramach
-                            <input type="number" name="weight" class="input-alternate" placeholder="Waga w gramach"
-                                   value="{{ xero_cost.weight }}">
-                        </label>
-                    </div>
-                    <div>
-                        <label for="is-bind">Zbindowane?
-                            <input type="checkbox" name="is-bind" value="true" {% if xero_cost.is_bind %} checked {% endif %}>
-                        </label>
-                    </div>
-                    {% include 'elements/sides-choice-input.html' %}
-                    {% include 'elements/xero-bind-price-input.html' %}
-                    {% include 'elements/submit-button.html' %}
-                </form>
-                <div>
-                    <h3>Ilość stron ksera: {{ xero_cost.number_of_pages }}</h3>
-                    <h2>Kwota bez bindu: {{ xero_cost.calc_xero_cost_without_bind }} zł</h2>
-                    <h2>Kwota z bindem: {{ xero_cost.calc_xero_cost_with_bind }} zł</h2>
-                    <h3>Cena bindu: {{ xero_cost.bind_cost }} (sugerowany koszt: {{ suggested_bind_price }} zł)</h3>
-                    <a class="btn btn-red" href="/calc/add">Dodaj</a>
-                </div>
-                <div>
-                    <h2>Lista kser</h2>
-                    <a href="/calc/reset">Zresetuj</a>
-                    <table class="table">
-                        <tr>
-                            <th>Nazwa</th>
-                            <th>Ilość stron</th>
-                            <th>Cena za stronę ksera</th>
-                            <th>Koszt bindu</th>
-                            <th>Cały koszt bez bindu</th>
-                            <th>Cały koszt z bindem</th>
-                        </tr>
-                        {% for xero in xero_list.get_all_xero_calcs %}
-                            <tr>
-                                <td>{{ xero.name }}</td>
-                                <td>{{ xero.number_of_pages }}</td>
-                                <td>{{ xero.cost_per_page_in_grosz }} gr</td>
-                                <td>{{ xero.bind_cost }} zł</td>
-                                <td>{{ xero.calc_xero_cost_without_bind }} zł</td>
-                                <td><b>{{ xero.calc_xero_cost_with_bind }} zł</b></td>
-                                <td>
-                                    <a href="/calc/costs/{{ xero.id }}/delete"><i class="material-icon"></i>delete</a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        <tr>
-                            <td>Razem:</td>
-                            <td>{{ xero_list.get_all_xero_pages }}</td>
-                            <td><br></td>
-                            <td>{{ xero_list.get_all_bind_cost }} zł</td>
-                            <td>{{ xero_list.get_all_cost_without_bind }} zł</td>
-                            <td><b>{{ xero_list.get_all_cost_with_bind }} zł</b></td>
-                        </tr>
-
-                    </table>
-
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h1>KALKULATOR</h1>
+                            <h2>Wybierz rodzaj kalkulatora</h2>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="card-title" id="simple-calc" onclick="showForm(this.id)">
+                                    <h2>Znam ilość stron lub kartek</h2>
+                                </div>
+                                <div id="simple-calc-body" class="form-area" style="display: none">
+                                    <form method="post" action="/calc/calculate/">
+                                        {% csrf_token %}
+                                        {% include 'elements/name-input.html' %}
+                                        <div>
+                                            <label for="number_of_pages_or_cards">Ilość kartek lub stron
+                                                <input type="number" name="number_of_pages_or_cards"
+                                                       class="input-alternate"
+                                                       placeholder="Ilość stron lub kartek"
+                                                       value= {% if xero_cost.is_cards_in_form %} "{{ xero_cost.number_of_cards }}" {% else %}
+                                                           "{{ xero_cost.number_of_pages }}" {% endif %}>
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" name="pages_or_cards" value="cards"
+                                                   {% if xero_cost.is_cards_in_form %}checked{% endif %}>kartki
+                                            <input type="radio" name="pages_or_cards" value="pages"
+                                                   {% if not xero_cost.is_cards_in_form %}checked{% endif %}>strony
+                                        </div>
+                                        {% include 'elements/sides-choice-input.html' %}
+                                        {% include 'elements/xero-bind-price-input.html' %}
+                                        {% include 'elements/submit-button.html' %}
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="card-title" id="book-calc" onclick="showForm(this.id)">
+                                    <h2>Znam ilość stron w oryginalnej książce</h2>
+                                </div>
+                                <div id="book-calc-body" class="form-area" style="display: none">
+                                    <form action="/calc/calculate-book/" method="post">
+                                        {% csrf_token %}
+                                        {% include 'elements/name-input.html' %}
+                                        <div>
+                                            <p>Ilość stron w książce</p>
+                                            <div>
+                                                <label for="book_pages_arabic">numeracja arabska (podstawowa)
+                                                    <input type="number" name="book_pages_arabic"
+                                                           class="input-alternate"
+                                                           placeholder="Ilość stron" value="
+
+                                                            {% if xero_cost.book_pages_arabic %}{{ xero_cost.book_pages_arabic }}{% else %}0{% endif %}">
+                                                </label>
+                                            </div>
+                                            <div>
+                                                <label for="book_pages_roman">numeracja rzymska (na początku)
+                                                    <input type="number" name="book_pages_roman" class="input-alternate"
+                                                           placeholder="Ilość stron" value="
+
+                                                            {% if xero_cost.book_pages_roman %}{{ xero_cost.book_pages_roman }}{% else %}0{% endif %}">
+                                                </label>
+                                            </div>
+                                        </div>
+                                        {% include 'elements/sides-choice-input.html' %}
+                                        <div>
+                                            <label for="cost_per_page">Koszt 1 strony ksero
+                                                {% for cost in xero_cost.XERO_COSTS %}
+                                                    <input type="radio"
+                                                           class="{% if cost == xero_cost.cost_per_page_in_grosz %}btn btn-red{% else %}btn btn-amber{% endif %}"
+                                                           {% if cost == xero_cost.cost_per_page_in_grosz %}checked{% endif %}
+                                                           value="{{ cost }}" name="cost_per_page">{{ cost }} gr
+                                                {% endfor %}
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <label for="cost_per_page">Koszt bindu
+                                                {% for cost in xero_cost.BIND_COSTS %}
+                                                    <input type="radio"
+                                                           class="{% if cost == xero_cost.bind_cost %}btn btn-red{% else %}btn btn-amber{% endif %}"
+                                                           {% if cost == xero_cost.bind_cost %}checked{% endif %}
+                                                           value="{{ cost }}" name="bind_cost">{{ cost }} zł
+                                                {% endfor %}
+                                            </label>
+                                        </div>
+                                        {% include 'elements/submit-button.html' %}
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                                            <div class="card">
+                            <div class="card-body">
+                                <div class="card-title" id="weight-calc" onclick="showForm(this.id)">
+                            <h2>Mogę zważyć</h2>
+                                                                </div>
+                                <div id="weight-calc-body" class="form-area" style="display: none">
+                            <form action="/calc/by-weight/" method="post">
+                                {% csrf_token %}
+                                {% include 'elements/name-input.html' %}
+                                <div>
+                                    <label for="weight">Waga w gramach
+                                        <input type="number" name="weight" class="input-alternate"
+                                               placeholder="Waga w gramach"
+                                               value="{{ xero_cost.weight }}">
+                                    </label>
+                                </div>
+                                <div>
+                                    <label for="is-bind">Zbindowane?
+                                        <input type="checkbox" name="is-bind" value="true" {% if xero_cost.is_bind %}
+                                               checked {% endif %}>
+                                    </label>
+                                </div>
+                                {% include 'elements/sides-choice-input.html' %}
+                                {% include 'elements/xero-bind-price-input.html' %}
+                                {% include 'elements/submit-button.html' %}
+                            </form>
+                                                                </div>
+                            </div>
+                                            </div>
+                    </div>
+                            <div>
+                                <h3>Ilość stron ksera: {{ xero_cost.number_of_pages }}</h3>
+                                <h2>Kwota bez bindu: {{ xero_cost.calc_xero_cost_without_bind }} zł</h2>
+                                <h2>Kwota z bindem: {{ xero_cost.calc_xero_cost_with_bind }} zł</h2>
+                                <h3>Cena bindu: {{ xero_cost.bind_cost }} (sugerowany koszt: {{ suggested_bind_price }}
+                                    zł)</h3>
+                                <a class="btn btn-red" href="/calc/add">Dodaj</a>
+                            </div>
+                            <div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h2>Lista kser</h2>
+            <a href="/calc/reset">Zresetuj</a>
+            <table class="table">
+                <tr>
+                    <th>Nazwa</th>
+                    <th>Ilość stron</th>
+                    <th>Cena za stronę ksera</th>
+                    <th>Koszt bindu</th>
+                    <th>Cały koszt bez bindu</th>
+                    <th>Cały koszt z bindem</th>
+                </tr>
+                {% for xero in xero_list.get_all_xero_calcs %}
+                    <tr>
+                        <td>{{ xero.name }}</td>
+                        <td>{{ xero.number_of_pages }}</td>
+                        <td>{{ xero.cost_per_page_in_grosz }} gr</td>
+                        <td>{{ xero.bind_cost }} zł</td>
+                        <td>{{ xero.calc_xero_cost_without_bind }} zł</td>
+                        <td><b>{{ xero.calc_xero_cost_with_bind }} zł</b></td>
+                        <td>
+                            <a href="/calc/costs/{{ xero.id }}/delete"><i class="material-icon"></i>delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td>Razem:</td>
+                    <td>{{ xero_list.get_all_xero_pages }}</td>
+                    <td><br></td>
+                    <td>{{ xero_list.get_all_bind_cost }} zł</td>
+                    <td>{{ xero_list.get_all_cost_without_bind }} zł</td>
+                    <td><b>{{ xero_list.get_all_cost_with_bind }} zł</b></td>
+                </tr>
+
+            </table>
+
+        </div>
+    </div>
+
+    </div>
     </div>
     <script>
         function showPagesInput(form, inputName) {
-            input = form[inputName];
+            var input = form[inputName];
             input.removeAttribute('hidden');
             inputName == "onesided-in-mixtwosided" ? form['twosided-in-mixonesided'].setAttribute("hidden", true) :
                 form['onesided-in-mixtwosided'].setAttribute("hidden", true);
@@ -158,9 +215,18 @@
             var oneSided = form['twosided-in-mixonesided'];
             oneSided.setAttribute("hidden", true);
             oneSided.value = 0;
-            var twoSided =  form['onesided-in-mixtwosided'];
+            var twoSided = form['onesided-in-mixtwosided'];
             twoSided.setAttribute("hidden", true);
             twoSided.value = 0;
+        }
+
+        function showForm(id) {
+            formDivs = document.getElementsByClassName("form-area");
+            for (var i = 0; i < formDivs.length; i++) {
+                formDivs[i].style.display = formDivs[i].id == id + "-body" ? 'block' : 'none';
+            }
+
+
         }
     </script>
 {% endblock %}
