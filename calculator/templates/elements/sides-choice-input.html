@@ -1,18 +1,18 @@
 
                     <div>
                         <label for="sides">1- czy 2-stronne
-                            <input type="radio" name="sides" value="onesided" onchange="hidePagesInputs()"
+                            <input type="radio" name="sides" value="onesided" onchange="hidePagesInputs(this.form)"
                                    {% if xero_cost.is_one_sided %}checked{% endif %}> Wszystkie 1-stronne
-                            <input type="radio" name="sides" value="twosided" onchange="hidePagesInputs()"
+                            <input type="radio" name="sides" value="twosided" onchange="hidePagesInputs(this.form)"
                                    {% if xero_cost.is_two_sided %}checked{% endif %}> Wszystkie 2-stronne
                             <input type="radio" name="sides" value="mixonesided"
-                                   onchange="showPagesInput('twosided-in-mixonesided')"
+                                   onchange="showPagesInput(this.form, 'twosided-in-mixonesided')"
                                    {% if xero_cost.is_mix_with_one_sided_advantage %}checked{% endif %}> Przewaga 1-stronnych
                             <input type="number" id="twosided-in-mixonesided" name="twosided-in-mixonesided"
                                    {% if not xero_cost.is_mix_with_one_sided_advantage %}hidden{% endif %}
                                    value="{{ xero_cost.two_sided_pages_in_mix }}">
                             <input type="radio" name="sides" value="mixtwosided"
-                                   onchange="showPagesInput('onesided-in-mixtwosided')"
+                                   onchange="showPagesInput(this.form, 'onesided-in-mixtwosided')"
                                    {% if xero_cost.is_mix_with_two_sided_advantage %}checked{% endif %}> Przewaga 2-stronnych
                             <input type="number" id="onesided-in-mixtwosided" name="onesided-in-mixtwosided"
                                    {% if not xero_cost.is_mix_with_two_sided_advantage %}hidden{% endif %}

@@ -81,6 +81,7 @@ class XeroCalc(models.Model):
         return self.calc_xero_cost_without_bind() + self.bind_cost
 
 
+
 class XeroSimpleCalc(XeroCalc):
 
     number_of_cards_from_form = models.PositiveIntegerField(default=0)
@@ -139,3 +140,50 @@ class XeroBaseBookCalc(XeroCalc):
     def number_of_cards_real(self):
         return int(math.ceil(self.xero_pages_real/2))
 
+
+class XeroByWeightCalc(XeroCalc):
+    CARD_WEIGHT = 5
+    BIND_COMBS_WEIGHTS = {8: 2, 10: 3, 12: 4, 14: 6, 16: 8, 19: 11, 22: 12, 25: 14, 28: 17, 32: 12, 38: 18, 45: 20, 51: 23}
+    BIND_COMBS_RANGES = {6: range(1, 26), 8: range(26, 46), 10: range(46, 66), 12: range(66, 86), 14: range(86, 111),
+                         16: range(111, 146), 19: range(146, 186), 22: range(186, 206), 25: range(206, 241),
+                         28: range(241, 271), 32: range(271, 301), 38: range(301, 351), 45: range(351, 441),
+                         51: range(441, 501)}
+    BIND_FRONT_COVER_WEIGHTS = 13
+    BIND_BACK_COVER_WEIGHTS = 15
+    weight = models.PositiveIntegerField(default=0)
+    is_bind = models.BooleanField(default=False)
+    is_mix_with_two_sided_advantage = models.BooleanField(default=False)
+    is_mix_with_one_sided_advantage = models.BooleanField(default=False)
+    two_sided_pages_in_mix = models.PositiveIntegerField(default=0)
+    one_sided_pages_in_mix = models.PositiveIntegerField(default=0)
+
+    @property
+    def bind_weight(self):
+        return (self.BIND_BACK_COVER_WEIGHTS + self.BIND_FRONT_COVER_WEIGHTS + self.BIND_COMBS_WEIGHTS[self.calc_bind_size()]) \
+            if self.is_bind else 0
+
+    @property
+    def number_of_cards(self):
+        return self.cards_from_weight(self.weight - self.bind_weight)
+
+    @property
+    def number_of_pages(self):
+        base_pages = self.number_of_cards * (2 if self.is_two_sided or self.is_mix_with_two_sided_advantage else 1)
+        additional_pages = 0 if not self.is_mix else (self.two_sided_pages_in_mix - self.one_sided_pages_in_mix)
+        return base_pages + additional_pages
+
+    def calc_bind_size(self):
+        default_size = 12
+        weight_without_covers = self.weight - self.BIND_FRONT_COVER_WEIGHTS - self.BIND_BACK_COVER_WEIGHTS
+        for size, comb_weight in self.BIND_COMBS_WEIGHTS.items():
+            if self.cards_from_weight(weight_without_covers - comb_weight) in self.BIND_COMBS_RANGES[size]:
+                return size
+        return default_size
+
+    @classmethod
+    def cards_from_weight(cls, weight):
+        return weight // cls.CARD_WEIGHT
+
+    @property
+    def is_mix(self):
+        return self.is_mix_with_two_sided_advantage or self.is_mix_with_one_sided_advantage
