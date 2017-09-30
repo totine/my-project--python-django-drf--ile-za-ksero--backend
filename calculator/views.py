@@ -140,5 +140,7 @@ def cost_edit(request, costid):
     return render(request, 'cost-edit.html', context=data)
 
 
-def cost_view(request):
-    return None
+def cost_view(request, costid):
+    xero_cost = XeroCalc.get_xero_calc_by_id(costid)
+    data = {'xero_cost': xero_cost}
+    return render(request, 'cost-view.html', context=data)

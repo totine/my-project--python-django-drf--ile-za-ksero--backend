@@ -12,13 +12,14 @@
     </thead>
     {% for xero in xero_list.get_all_xero_calcs %}
         <tr>
-            <td>{{ xero.name }}</td>
+            <td><a href="costs/{{ xero.id }}">{{ xero.name }}</a></td>
             <td>{{ xero.number_of_pages }}</td>
             <td>{{ xero.cost_per_page_in_grosz }} gr</td>
             <td>{{ xero.bind_cost }} zł</td>
             <td>{{ xero.calc_xero_cost_without_bind }} zł</td>
             <td><b>{{ xero.calc_xero_cost_with_bind }} zł</b></td>
             <td>
+                <a href="costs/{{ xero.id }}"><i class="material-icon"></i>szczegóły</a>
                 <a href="costs/{{ xero.id }}/edit"><i class="material-icon"></i>zmień</a>
                 <a href="costs/{{ xero.id }}/delete"><i class="material-icon"></i>usuń</a>
             </td>
