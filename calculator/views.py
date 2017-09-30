@@ -53,7 +53,7 @@ def calculate(request):
     xero_list = XeroList.objects.get(pk=request.session["xero_list_id"]) if "xero_list_id" in request.session else XeroList()
     request.session["xero_list_id"] = xero_list.id
     request.session['xero_cost_id'] = xero_cost.id
-    return redirect("/calc/")
+    return redirect("/")
 
 
 def calculate_book(request):
@@ -68,7 +68,7 @@ def calculate_book(request):
     xero_cost.cost_per_page = cost_per_page
     xero_cost.save()
     request.session['xero_cost_id'] = xero_cost.id
-    return redirect("/calc/")
+    return redirect("/")
 
 
 def add_xero_to_list(request):
@@ -77,19 +77,19 @@ def add_xero_to_list(request):
     xero_list.add(xero_cost)
     xero_cost.save()
     xero_list.save()
-    return redirect("/calc/")
+    return redirect("/")
 
 
 def delete_cost(request, costid):
     xero_cost = XeroCalc.get_xero_calc_by_id(costid)
     xero_cost.xero_cost_list = None
     xero_cost.save()
-    return redirect("/calc/")
+    return redirect("/")
 
 
 def reset_xero_list(request):
     del request.session['xero_list_id']
-    return redirect("/calc/")
+    return redirect("/")
 
 
 def calculate_by_weight(request):
@@ -118,4 +118,4 @@ def calculate_by_weight(request):
     xero_list = XeroList.objects.get(pk=request.session["xero_list_id"]) if "xero_list_id" in request.session else XeroList()
     request.session["xero_list_id"] = xero_list.id
     request.session['xero_cost_id'] = xero_cost.id
-    return redirect("/calc/")
+    return redirect("/")
