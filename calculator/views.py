@@ -100,7 +100,7 @@ def calculate_by_weight(request):
     number_of_one_sided_pages_in_two_sided_mix = int(request.POST['onesided-in-mixtwosided']) if request.POST['onesided-in-mixtwosided'] else 0
     number_of_two_sided_pages_in_one_sided_mix = int(request.POST['twosided-in-mixonesided']) if request.POST['twosided-in-mixonesided'] else 0
     bind_cost = Decimal(request.POST.get('bind_cost', 0))
-    xero_cost = XeroByWeightCalc()
+    xero_cost = XeroByWeightCalc() if not 'costid' in request.POST else XeroCalc.get_xero_calc_by_id(int(request.POST['costid']))
     xero_cost.cost_per_page = cost_per_page
     xero_cost.is_bind = True if 'is-bind' in request.POST else False
     xero_cost.weight = int(request.POST['weight'])
@@ -113,9 +113,32 @@ def calculate_by_weight(request):
     xero_cost.is_mix_with_two_sided_advantage = sides_dict["mixtwosided"]
     xero_cost.one_sided_pages_in_mix = number_of_one_sided_pages_in_two_sided_mix if number_of_one_sided_pages_in_two_sided_mix and xero_cost.is_mix_with_two_sided_advantage else 0
     xero_cost.two_sided_pages_in_mix = number_of_two_sided_pages_in_one_sided_mix if number_of_two_sided_pages_in_one_sided_mix and xero_cost.is_mix_with_one_sided_advantage else 0
-    print(xero_cost.calc_bind_size())
     xero_cost.save()
     xero_list = XeroList.objects.get(pk=request.session["xero_list_id"]) if "xero_list_id" in request.session else XeroList()
     request.session["xero_list_id"] = xero_list.id
     request.session['xero_cost_id'] = xero_cost.id
     return redirect("/")
+
+
+def xerolist_view(request, xerolistid):
+    xerolist = XeroList.objects.get(pk=xerolistid)
+    data = {'xero_list': xerolist}
+    return render(request, 'xerolist.html', context=data)
+
+
+def xerolist_delete(request, xerolistid):
+    xerolist = XeroList.objects.get(pk=xerolistid)
+    xerolist.delete()
+    xerolist.save()
+    return redirect('/')
+
+
+def cost_edit(request, costid):
+    xero_cost = XeroCalc.get_xero_calc_by_id(costid)
+    xero_type = xero_cost.cost_short_name
+    data = {'xero_cost': xero_cost, 'xero_type': xero_type}
+    return render(request, 'cost-edit.html', context=data)
+
+
+def cost_view(request):
+    return None

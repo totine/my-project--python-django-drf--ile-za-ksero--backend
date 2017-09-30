@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load mathfilters %}
 
 {% block title %}
     Kalkulator
@@ -94,6 +93,7 @@
                 </div>
                 <div class="card-text">
                     <a href="reset">Zresetuj</a>
+                    <a href="/xerolists/{{ xero_list.id }}">Szczegóły</a>
                     {% include 'elements/xero-list-table.html' %}
 
                 </div>

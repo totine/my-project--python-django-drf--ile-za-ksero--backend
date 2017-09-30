@@ -1,7 +1,8 @@
-<form action="/calc/by-weight/" method="post">
+<form action="/by-weight/" method="post">
     {% csrf_token %}
     {% include 'elements/name-input.html' %}
     <div>
+        <input type="number" hidden value="{{ xero_cost.id }}" name="costid">
         <label for="weight">Waga w gramach
             <input type="number" name="weight" class="input-alternate"
                    placeholder="Waga w gramach"
