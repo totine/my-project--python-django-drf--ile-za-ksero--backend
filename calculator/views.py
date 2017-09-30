@@ -14,7 +14,7 @@ def calculator(request):
     except:
         bind = Bind()
 
-    xero_cost = XeroSimpleCalc() if not request.session["xero_cost_id"] or not XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"]) \
+    xero_cost = XeroSimpleCalc() if not "xero_cost_id" in request.session or not XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"]) \
         else XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"])
     try:
         xero_list = XeroList.objects.get(pk=request.session["xero_list_id"])
