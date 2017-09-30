@@ -148,13 +148,25 @@
                             </div>
                                             </div>
                     </div>
+
                             <div>
+                            </div>
+                </div>
+                                       <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h2>Podsumowanie</h2>
+                        </div>
+                        <div class="card-text">
                                 <h3>Ilość stron ksera: {{ xero_cost.number_of_pages }}</h3>
                                 <h2>Kwota bez bindu: {{ xero_cost.calc_xero_cost_without_bind }} zł</h2>
                                 <h2>Kwota z bindem: {{ xero_cost.calc_xero_cost_with_bind }} zł</h2>
                                 <h3>Cena bindu: {{ xero_cost.bind_cost }} (sugerowany koszt: {{ suggested_bind_price }}
                                     zł)</h3>
                                 <a class="btn btn-red" href="/calc/add">Dodaj</a>
+                            </div>
                             </div>
                             <div>
                             </div>
@@ -163,7 +175,15 @@
                     </div>
                 </div>
             </div>
+        </div>
+         <div class="row">
+                    <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-title">
             <h2>Lista kser</h2>
+                        </div>
+                    <div class="card-text">
             <a href="/calc/reset">Zresetuj</a>
             <table class="table">
                 <tr>
