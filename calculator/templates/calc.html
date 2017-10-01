@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Kalkulator
+    Ile za ksero? - Kalkulator kosztów ksero
 {% endblock %}
 
 {% block body %}
@@ -23,16 +23,16 @@
     </div>
     <div class="row">
         <div class="col">
-            <div class="card">
+            <div class="card" id="calculator">
                 <div class="card-body">
                     <div class="card-title">
-                        <h1>KALKULATOR</h1>
+                        <h1>KALKULATOR KOSZTÓW KSERA</h1>
                         <h2>Wybierz rodzaj kalkulatora</h2>
                     </div>
                     <div class="card">
                         <div class="card-body">
                             <div class="card-title" id="simple-calc" onclick="showForm(this.id)">
-                                <h2>Znam ilość stron lub kartek</h2>
+                                <div class="btn btn-default">Znam ilość stron lub kartek w ksero</div>
                             </div>
                             <div id="simple-calc-body" class="form-area" style="display: none">
                                 {% include 'elements/simple-xero-form.html' %}
@@ -42,7 +42,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="card-title" id="book-calc" onclick="showForm(this.id)">
-                                <h2>Znam ilość stron w oryginalnej książce</h2>
+                                <div class="btn btn-default">Znam ilość stron w oryginalnej książce</div>
                             </div>
                             <div id="book-calc-body" class="form-area" style="display: none">
                                 {% include 'elements/book-xero-form.html' %}
@@ -52,7 +52,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="card-title" id="weight-calc" onclick="showForm(this.id)">
-                                <h2>Mogę zważyć</h2>
+                                <div class="btn btn-default">Mogę zważyć kserówkę</div>
                             </div>
                             <div id="weight-calc-body" class="form-area" style="display: none">
                                 {% include 'elements/weight-xero-form.html' %}
@@ -64,16 +64,19 @@
                 <div>
                 </div>
             </div>
-            <div class="row">
+            {% if xero_cost.id %}
+            <div class="row" id="calculation-resume">
                 <div class="col">
                     <div class="card">
                         <div class="card-body">
                             <div class="card-title">
-                                <h2>Podsumowanie</h2>
+                                <h2>Podsumowanie bieżącej kalkulacji <a class="btn btn-outline-red" href="#calculator">Nowa kalkulacja</a></h2>
                             </div>
                             <div class="card-text">
                                 {% include 'elements/xero-summary.html' %}
-                                <a class="btn btn-red" href="/add">Dodaj</a>
+                                <a class="btn btn-red" href="/add">Dodaj do listy</a>
+                                <a class="btn btn-grey" href="{% url 'cost_edit' xero_cost.id %}">Zmień</a>
+                                <a class="btn btn-light" href="{% url 'cost_reset' %}">Zresetuj</a>
                             </div>
                         </div>
                         <div>
@@ -82,11 +85,13 @@
                     </div>
                 </div>
             </div>
+            {% endif %}
         </div>
     </div>
+    {% if xero_list.get_all_xero_calcs %}
     <div class="row">
     <div class="col">
-        <div class="card">
+        <div class="card" id="xerolist">
             <div class="card-body">
                 <div class="card-title">
                     <h2>Lista kser</h2>
@@ -102,6 +107,7 @@
         </div>
     </div>
     </div>
+    {% endif %}
     </div>
     <script>
         function showPagesInput(form, inputName) {

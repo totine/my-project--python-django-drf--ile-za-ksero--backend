@@ -9,10 +9,6 @@ from calculator.models import XeroCalc, XeroSimpleCalc, XeroBookCalc, XeroList, 
 
 
 def calculator(request):
-    try:
-        bind = Bind.objects.get(name="main")
-    except:
-        bind = Bind()
 
     xero_cost = XeroSimpleCalc() if not "xero_cost_id" in request.session or not XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"]) \
         else XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"])
@@ -21,9 +17,11 @@ def calculator(request):
     except:
         xero_list = XeroList()
     xero_list.save()
-    suggested_bind_price = bind.get_bind_price(xero_cost.number_of_cards)
+    xero_cost.bind_ranges = Bind.objects.get(name="main")
+
     request.session["xero_list_id"] = xero_list.id
-    data = {"xero_cost": xero_cost, "xero_list": xero_list, "suggested_bind_price": suggested_bind_price}
+    data = {"xero_cost": xero_cost, "xero_list": xero_list}
+
     return render(request, 'calc.html', context=data)
 
 
@@ -36,7 +34,8 @@ def calculate(request):
     number_of_one_sided_pages_in_two_sided_mix = int(request.POST['onesided-in-mixtwosided']) if request.POST['onesided-in-mixtwosided'] else 0
     number_of_two_sided_pages_in_one_sided_mix = int(request.POST['twosided-in-mixonesided']) if request.POST['twosided-in-mixonesided'] else 0
     bind_cost = Decimal(request.POST.get('bind_cost', 0))
-    xero_cost = XeroSimpleCalc()
+    xero_cost = XeroSimpleCalc() if not "xero_cost_id" in request.session or not XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"]) \
+        else XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"])
     xero_cost.cost_per_page = cost_per_page
     xero_cost.is_cards_in_form = True if request.POST['pages_or_cards'] == 'cards' else False
     xero_cost.number_of_cards_from_form = number_of_pages_or_cards if xero_cost.is_cards_in_form else int(math.ceil(number_of_pages_or_cards/2))
@@ -53,7 +52,7 @@ def calculate(request):
     xero_list = XeroList.objects.get(pk=request.session["xero_list_id"]) if "xero_list_id" in request.session else XeroList()
     request.session["xero_list_id"] = xero_list.id
     request.session['xero_cost_id'] = xero_cost.id
-    return redirect("/")
+    return redirect("/#calculation-resume")
 
 
 def calculate_book(request):
@@ -61,7 +60,8 @@ def calculate_book(request):
     roman_pages = int(request.POST.get('book_pages_roman', 0))
     bind_cost = Decimal(request.POST.get('bind_cost', 0))
     cost_per_page = Decimal(request.POST.get('cost_per_page', 0)) / 100
-    xero_cost = XeroBookCalc()
+    xero_cost = XeroBookCalc() if not "xero_cost_id" in request.session or not XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"]) \
+        else XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"])
     xero_cost.book_pages_arabic = arabic_pages
     xero_cost.book_pages_roman = roman_pages
     xero_cost.bind_cost = bind_cost
@@ -77,7 +77,7 @@ def add_xero_to_list(request):
     xero_list.add(xero_cost)
     xero_cost.save()
     xero_list.save()
-    return redirect("/")
+    return redirect("/#xerolist")
 
 
 def delete_cost(request, costid):
@@ -100,7 +100,8 @@ def calculate_by_weight(request):
     number_of_one_sided_pages_in_two_sided_mix = int(request.POST['onesided-in-mixtwosided']) if request.POST['onesided-in-mixtwosided'] else 0
     number_of_two_sided_pages_in_one_sided_mix = int(request.POST['twosided-in-mixonesided']) if request.POST['twosided-in-mixonesided'] else 0
     bind_cost = Decimal(request.POST.get('bind_cost', 0))
-    xero_cost = XeroByWeightCalc() if not 'costid' in request.POST else XeroCalc.get_xero_calc_by_id(int(request.POST['costid']))
+    xero_cost = XeroByWeightCalc() if not "xero_cost_id" in request.session or not XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"]) \
+        else XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"])
     xero_cost.cost_per_page = cost_per_page
     xero_cost.is_bind = True if 'is-bind' in request.POST else False
     xero_cost.weight = int(request.POST['weight'])
@@ -144,3 +145,8 @@ def cost_view(request, costid):
     xero_cost = XeroCalc.get_xero_calc_by_id(costid)
     data = {'xero_cost': xero_cost}
     return render(request, 'cost-view.html', context=data)
+
+
+def cost_reset(request):
+    del request.session['xero_cost_id']
+    return redirect("/")

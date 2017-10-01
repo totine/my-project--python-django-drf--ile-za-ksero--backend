@@ -6,13 +6,13 @@
         <label for="weight">Waga w gramach
             <input type="number" name="weight" class="input-alternate"
                    placeholder="Waga w gramach"
-                   value="{{ xero_cost.weight }}">
+                   value="{{ xero_cost.weight }}" required min="5">
         </label>
     </div>
-    <div>
-        <label for="is-bind">Zbindowane?
-            <input type="checkbox" name="is-bind" value="true" {% if xero_cost.is_bind %}
+    <div>            <input type="checkbox" name="is-bind" value="true" {% if xero_cost.is_bind %}
                    checked {% endif %}>
+        <label for="is-bind">Zbindowane?
+
         </label>
     </div>
     {% include 'elements/sides-choice-input.html' %}

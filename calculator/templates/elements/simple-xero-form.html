@@ -2,6 +2,7 @@
     {% csrf_token %}
     {% include 'elements/name-input.html' %}
     <div>
+        <input type="number" hidden value="{{ xero_cost.id }}" name="costid">
         <label for="number_of_pages_or_cards">Ilość kartek lub stron
             <input type="number" name="number_of_pages_or_cards"
                    class="input-alternate"

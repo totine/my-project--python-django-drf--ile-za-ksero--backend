@@ -1,6 +1,7 @@
 <form action="/calculate-book/" method="post">
     {% csrf_token %}
     {% include 'elements/name-input.html' %}
+        <input type="number" hidden value="{{ xero_cost.id }}" name="costid">
     <div>
         <p>Ilość stron w książce</p>
         <div>

@@ -55,6 +55,7 @@ class XeroCalc(models.Model):
     is_two_sided = models.BooleanField(default=False)
     bind_ranges = models.ForeignKey(Bind, default=None)
     cost_short_name = ''
+
     @property
     def number_of_pages(self):
         return 0
@@ -94,6 +95,7 @@ class XeroSimpleCalc(XeroCalc):
     one_sided_pages_in_mix = models.PositiveIntegerField(default=0)
     is_cards_in_form = models.BooleanField(default=False)
     cost_short_name = 'simple'
+
     @property
     def number_of_pages(self):
         base_pages = self.number_of_cards_from_form * (2 if self.is_two_sided or self.is_mix_with_two_sided_advantage else 1)
