@@ -24,9 +24,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '#gmjkp)c!q9m0%^&-v22or8rq#5-bszslu1qrdv6obz2%6)5v_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['ilezaksero.herokuapp.com', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['ilezaksero.herokuapp.com', '127.0.0.1', 'localhost', 'ilezaksero.pl']
 
 
 # Application definition
