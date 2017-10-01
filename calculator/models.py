@@ -19,6 +19,9 @@ class BindRange(models.Model):
     class Meta:
         ordering = ['range_top']
 
+    def __str__(self):
+        return str(self.range_top) + "-" + str(self.range_price)
+
 class XeroList(models.Model):
 
     def get_all_xero_pages(self):
@@ -104,6 +107,8 @@ class XeroSimpleCalc(XeroCalc):
     @property
     def is_mix(self):
         return self.is_mix_with_two_sided_advantage or self.is_mix_with_one_sided_advantage
+
+
 
 
 class XeroBookCalc(XeroCalc):
