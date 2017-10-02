@@ -1,20 +1,23 @@
 <form action="/by-weight/" method="post">
     {% csrf_token %}
     {% include 'elements/name-input.html' %}
-    <div>
+    <div class="md-form">
         <input type="number" hidden value="{{ xero_cost.id }}" name="costid">
-        <label for="weight">Waga w gramach
-            <input type="number" name="weight" class="input-alternate"
-                   placeholder="Waga w gramach"
+        <label for="weight">Waga w gramach </label>
+            <input type="number" name="weight" class="form-control"
+
                    value="{{ xero_cost.weight }}" required min="5">
-        </label>
+
     </div>
+    <hr>
     <div>            <input type="checkbox" name="is-bind" value="true" {% if xero_cost.is_bind %}
                    checked {% endif %}>
+
         <label for="is-bind">Zbindowane?
 
         </label>
     </div>
+    <hr>
     {% include 'elements/sides-choice-input.html' %}
     {% include 'elements/xero-bind-price-input.html' %}
     {% include 'elements/submit-button.html' %}

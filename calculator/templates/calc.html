@@ -32,30 +32,42 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="card-title" id="simple-calc" onclick="showForm(this.id)">
-                                <div class="btn btn-default">Znam ilość stron lub kartek w ksero</div>
+                                <div class="btn btn-default btn-lg btn-block">Znam ilość stron lub kartek w ksero</div>
                             </div>
                             <div id="simple-calc-body" class="form-area" style="display: none">
+                                                                                    <div class="card">
+                        <div class="card-body">
                                 {% include 'elements/simple-xero-form.html' %}
+                        </div>
+                                                                                    </div>
                             </div>
                         </div>
                     </div>
                     <div class="card">
                         <div class="card-body">
                             <div class="card-title" id="book-calc" onclick="showForm(this.id)">
-                                <div class="btn btn-default">Znam ilość stron w oryginalnej książce</div>
+                                <div class="btn btn-default btn-lg btn-block">Znam ilość stron w oryginalnej książce</div>
                             </div>
                             <div id="book-calc-body" class="form-area" style="display: none">
+                                                    <div class="card">
+                        <div class="card-body">
                                 {% include 'elements/book-xero-form.html' %}
+                        </div>
+                                                    </div>
                             </div>
                         </div>
                     </div>
                     <div class="card">
                         <div class="card-body">
                             <div class="card-title" id="weight-calc" onclick="showForm(this.id)">
-                                <div class="btn btn-default">Mogę zważyć kserówkę</div>
+                                <div class="btn btn-default btn-lg btn-block">Mogę zważyć kserówkę</div>
                             </div>
                             <div id="weight-calc-body" class="form-area" style="display: none">
+                                                                                    <div class="card">
+                        <div class="card-body">
                                 {% include 'elements/weight-xero-form.html' %}
+                        </div>
+                                                                                    </div>
                             </div>
                         </div>
                     </div>
@@ -76,7 +88,7 @@
                                 {% include 'elements/xero-summary.html' %}
                                 <a class="btn btn-red" href="/add">Dodaj do listy</a>
                                 <a class="btn btn-grey" href="{% url 'cost_edit' xero_cost.id %}">Zmień</a>
-                                <a class="btn btn-light" href="{% url 'cost_reset' %}">Zresetuj</a>
+                                <a class="btn btn-grey" href="{% url 'cost_reset' %}">Zresetuj</a>
                             </div>
                         </div>
                         <div>
@@ -112,17 +124,22 @@
     <script>
         function showPagesInput(form, inputName) {
             var input = form[inputName];
+            var label = input.labels[0];
             input.removeAttribute('hidden');
-            inputName == "onesided-in-mixtwosided" ? form['twosided-in-mixonesided'].setAttribute("hidden", true) :
-                form['onesided-in-mixtwosided'].setAttribute("hidden", true);
+            label.removeAttribute('hidden');
+            var inputToHide = inputName == "onesided-in-mixtwosided" ? form['twosided-in-mixonesided'] : form['onesided-in-mixtwosided'];
+            inputToHide.setAttribute("hidden", true);
+            inputToHide.labels[0].setAttribute("hidden", true);
         }
 
         function hidePagesInputs(form) {
             var oneSided = form['twosided-in-mixonesided'];
             oneSided.setAttribute("hidden", true);
+            oneSided.labels[0].setAttribute("hidden", true);
             oneSided.value = 0;
             var twoSided = form['onesided-in-mixtwosided'];
             twoSided.setAttribute("hidden", true);
+            twoSided.labels[0].setAttribute("hidden", true);
             twoSided.value = 0;
         }
 

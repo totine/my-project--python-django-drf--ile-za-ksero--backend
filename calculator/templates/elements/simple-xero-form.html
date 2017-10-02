@@ -1,22 +1,25 @@
 <form method="post" action="/calculate/">
     {% csrf_token %}
     {% include 'elements/name-input.html' %}
-    <div>
+
+    <div class="md-form ">
         <input type="number" hidden value="{{ xero_cost.id }}" name="costid">
-        <label for="number_of_pages_or_cards">Ilość kartek lub stron
-            <input type="number" name="number_of_pages_or_cards"
-                   class="input-alternate"
+
+            <input type="number" name="number_of_pages_or_cards" min="1"
+                   class="form-control validate"
                    placeholder="Ilość stron lub kartek"
                    value= {% if xero_cost.is_cards_in_form %} "{{ xero_cost.number_of_cards }}" {% else %}
                        "{{ xero_cost.number_of_pages }}" {% endif %}>
-        </label>
+     <label data-error="wpisz prawidłową ilość stron lub kartek" for="number_of_pages_or_cards">Ilość kartek lub stron</label>
+
     </div>
-    <div>
+    <div class="md-form">
         <input type="radio" name="pages_or_cards" value="cards"
                {% if xero_cost.is_cards_in_form %}checked{% endif %}>kartki
         <input type="radio" name="pages_or_cards" value="pages"
                {% if not xero_cost.is_cards_in_form %}checked{% endif %}>strony
     </div>
+<hr>
     {% include 'elements/sides-choice-input.html' %}
     {% include 'elements/xero-bind-price-input.html' %}
     {% include 'elements/submit-button.html' %}

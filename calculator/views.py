@@ -18,7 +18,7 @@ def calculator(request):
         xero_list = XeroList()
     xero_list.save()
     xero_cost.bind_ranges = Bind.objects.get(name="main")
-
+    print(xero_cost.cost_per_page_in_grosz, xero_cost.cost_per_page, xero_cost.id)
     request.session["xero_list_id"] = xero_list.id
     data = {"xero_cost": xero_cost, "xero_list": xero_list}
 
@@ -66,9 +66,10 @@ def calculate_book(request):
     xero_cost.book_pages_roman = roman_pages
     xero_cost.bind_cost = bind_cost
     xero_cost.cost_per_page = cost_per_page
+    xero_cost.bind_ranges = Bind.objects.get(name="main")
     xero_cost.save()
     request.session['xero_cost_id'] = xero_cost.id
-    return redirect("/")
+    return redirect("/#calculation-resume")
 
 
 def add_xero_to_list(request):
@@ -118,7 +119,7 @@ def calculate_by_weight(request):
     xero_list = XeroList.objects.get(pk=request.session["xero_list_id"]) if "xero_list_id" in request.session else XeroList()
     request.session["xero_list_id"] = xero_list.id
     request.session['xero_cost_id'] = xero_cost.id
-    return redirect("/")
+    return redirect("/#calculation-resume")
 
 
 def xerolist_view(request, xerolistid):
