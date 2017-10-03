@@ -133,6 +133,8 @@ STATICFILES_DIRS = [
 
 ]
 
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "booklist/static/media/")
