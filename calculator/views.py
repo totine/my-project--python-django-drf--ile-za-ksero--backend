@@ -37,8 +37,9 @@ def calculate(request):
     xero_cost = XeroSimpleCalc() if not "xero_cost_id" in request.session or not XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"]) \
         else XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"])
     xero_cost.cost_per_page = cost_per_page
+    print(request.POST['pages_or_cards'])
     xero_cost.is_cards_in_form = True if request.POST['pages_or_cards'] == 'cards' else False
-    xero_cost.number_of_cards_from_form = number_of_pages_or_cards if xero_cost.is_cards_in_form else int(math.ceil(number_of_pages_or_cards/2))
+    xero_cost.number_of_cards_or_pages_from_form = number_of_pages_or_cards
     xero_cost.bind_cost = bind_cost
     xero_cost.bind_ranges = Bind.objects.get(name="main")
     xero_cost.name = cost_name

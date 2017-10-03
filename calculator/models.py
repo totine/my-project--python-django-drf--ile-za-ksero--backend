@@ -88,7 +88,7 @@ class XeroCalc(models.Model):
 
 class XeroSimpleCalc(XeroCalc):
 
-    number_of_cards_from_form = models.PositiveIntegerField(default=0)
+    number_of_cards_or_pages_from_form = models.PositiveIntegerField(default=0)
     is_mix_with_two_sided_advantage = models.BooleanField(default=False)
     is_mix_with_one_sided_advantage = models.BooleanField(default=False)
     two_sided_pages_in_mix = models.PositiveIntegerField(default=0)
@@ -97,20 +97,37 @@ class XeroSimpleCalc(XeroCalc):
     cost_short_name = 'simple'
 
     @property
+    def number_of_pages_from_form(self):
+        return self.number_of_cards_or_pages_from_form if not self.is_cards_in_form else 0
+
+    @property
+    def number_of_cards_from_form(self):
+        return self.number_of_cards_or_pages_from_form if self.is_cards_in_form else 0
+
+    @property
     def number_of_pages(self):
+        if not self.is_cards_in_form:
+            return self.number_of_pages_from_form
         base_pages = self.number_of_cards_from_form * (2 if self.is_two_sided or self.is_mix_with_two_sided_advantage else 1)
         additional_pages = 0 if not self.is_mix else (self.two_sided_pages_in_mix - self.one_sided_pages_in_mix)
         return base_pages + additional_pages
 
     @property
     def number_of_cards(self):
-        return self.number_of_cards_from_form
+        if self.is_cards_in_form:
+            return self.number_of_cards_from_form
+        if self.is_one_sided:
+            return self.number_of_pages_from_form
+        if self.is_two_sided:
+            return math.ceil(self.number_of_cards_or_pages_from_form/2)
+        if self.is_mix_with_two_sided_advantage:
+            return self.one_sided_pages_in_mix + (self.number_of_pages_from_form - self.one_sided_pages_in_mix)//2
+        if self.is_mix_with_one_sided_advantage:
+            return self.number_of_pages_from_form - self.two_sided_pages_in_mix
 
     @property
     def is_mix(self):
         return self.is_mix_with_two_sided_advantage or self.is_mix_with_one_sided_advantage
-
-
 
 
 class XeroBookCalc(XeroCalc):
