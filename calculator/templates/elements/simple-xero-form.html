@@ -6,7 +6,7 @@
         <input type="number" hidden value="{{ xero_cost.id }}" name="costid">
 
             <input type="number" name="number_of_pages_or_cards" min="1"
-                   class="form-control validate"
+                   class="form-control validate" required
                    placeholder="Ilość stron lub kartek"
                    value= {% if xero_cost.is_cards_in_form %} "{{ xero_cost.number_of_cards }}" {% else %}
                        "{{ xero_cost.number_of_pages }}" {% endif %}>
