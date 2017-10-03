@@ -46,12 +46,12 @@ class XeroList(models.Model):
 class XeroCalc(models.Model):
     XERO_DEFAULT_COST_PER_PAGE_IN_GROSZ = 7
     XERO_COSTS = [6, 7, 8, 9, 10]
-    BIND_COSTS = [1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6]
+    BIND_COSTS = [1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 7]
     name = models.CharField(max_length=200, blank=True, null=True, default="")
     xero_cost_list = models.ForeignKey(XeroList, null=True)
     cost_per_page = models.DecimalField(max_digits=2, decimal_places=2, default=0)
     bind_cost = models.DecimalField(max_digits=3, decimal_places=2, default=0)
-    is_one_sided = models.BooleanField(default=False)
+    is_one_sided = models.BooleanField(default=True)
     is_two_sided = models.BooleanField(default=False)
     bind_ranges = models.ForeignKey(Bind, default=None)
     cost_short_name = ''

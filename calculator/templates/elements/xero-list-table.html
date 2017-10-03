@@ -19,9 +19,9 @@
             <td>{{ xero.calc_xero_cost_without_bind }} zł</td>
             <td><b>{{ xero.calc_xero_cost_with_bind }} zł</b></td>
             <td>
-                <a href="costs/{{ xero.id }}"><i class="material-icon"></i>szczegóły</a>
-                <a href="costs/{{ xero.id }}/edit"><i class="material-icon"></i>zmień</a>
-                <a href="costs/{{ xero.id }}/delete"><i class="material-icon"></i>usuń</a>
+                <a href="/costs/{{ xero.id }}"><i class="material-icon"></i>szczegóły</a>
+                <a href="/costs/{{ xero.id }}/edit"><i class="material-icon"></i>zmień</a>
+                <a href="/costs/{{ xero.id }}/delete"><i class="material-icon"></i>usuń</a>
             </td>
         </tr>
     {% endfor %}

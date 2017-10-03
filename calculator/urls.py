@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^by-weight/$', views.calculate_by_weight, name="calculate-by-weight"),
     url(r'^add/$', views.add_xero_to_list, name="add-xero-to-list"),
     url(r'^reset/$', views.reset_xero_list, name="xerolist_reset"),
+    url(r'^new-calculation/$', views.new_calculation, name="new_calculation"),
     url(r'^costs/(?P<costid>\d+)$', views.cost_view, name="cost_view"),
     url(r'^costs/reset/$', views.cost_reset, name="cost_reset"),
     url(r'^costs/(?P<costid>\d+)/delete/$', views.delete_cost, name="cost_delete"),

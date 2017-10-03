@@ -82,7 +82,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="card-title">
-                                <h2>Podsumowanie bieżącej kalkulacji <a class="btn btn-outline-red" href="#calculator">Nowa kalkulacja</a></h2>
+                                <h2>Podsumowanie bieżącej kalkulacji <a class="btn btn-outline-red" href="{% url 'new_calculation' %}">Nowa kalkulacja</a></h2>
                             </div>
                             <div class="card-text">
                                 {% include 'elements/xero-summary.html' %}
