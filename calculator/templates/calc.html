@@ -76,7 +76,7 @@
                 <div>
                 </div>
             </div>
-            {% if xero_cost.id %}
+
             <div class="row" id="calculation-resume">
                 <div class="col">
                     <div class="card">
@@ -84,11 +84,18 @@
                             <div class="card-title">
                                 <h2>Podsumowanie bieżącej kalkulacji <a class="btn btn-outline-red" href="{% url 'new_calculation' %}">Nowa kalkulacja</a></h2>
                             </div>
+
                             <div class="card-text">
+                                {% if xero_cost.id %}
                                 {% include 'elements/xero-summary.html' %}
                                 <a class="btn btn-red" href="/add">Dodaj do listy</a>
                                 <a class="btn btn-grey" href="{% url 'cost_edit' xero_cost.id %}">Zmień</a>
                                 <a class="btn btn-grey" href="{% url 'cost_reset' %}">Zresetuj</a>
+                                    {% else %}
+                                    brak kalkulacji
+                                {% endif %}
+
+
                             </div>
                         </div>
                         <div>
@@ -97,10 +104,10 @@
                     </div>
                 </div>
             </div>
-            {% endif %}
+
         </div>
     </div>
-    {% if xero_list.get_all_xero_calcs %}
+
     <div class="row">
     <div class="col">
         <div class="card" id="xerolist">
@@ -108,18 +115,22 @@
                 <div class="card-title">
                     <h2>Lista kser</h2>
                 </div>
+
                 <div class="card-text">
+                    {% if xero_list.get_all_xero_calcs %}
                     <a href="reset">Zresetuj</a>
                     <a href="/xerolists/{{ xero_list.id }}">Szczegóły</a>
                     {% include 'elements/xero-list-table.html' %}
-
+                        {% else %}
+                        Lista jest pusta
+{% endif %}
                 </div>
             </div>
 
         </div>
     </div>
     </div>
-    {% endif %}
+
     </div>
     <script>
         function showPagesInput(form, inputName) {
