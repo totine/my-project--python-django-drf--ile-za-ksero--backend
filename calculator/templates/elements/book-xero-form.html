@@ -10,10 +10,7 @@
 
             <input type="number" name="book_pages_arabic"
                    class="form-control"
-                   value="
-
-
-                        {% if xero_cost.book_pages_arabic %}{{ xero_cost.book_pages_arabic }}{% else %}0{% endif %}" required>
+                   value="{{ xero_cost.book_pages_arabic }}" required>
             <label for="book_pages_arabic">numeracja arabska (podstawowa)</label>
 
         </div>
@@ -21,10 +18,7 @@
         <div class="md-form">
 
             <input type="number" name="book_pages_roman" class="form-control"
-                   value="
-
-
-                        {% if xero_cost.book_pages_roman %}{{ xero_cost.book_pages_roman }}{% else %}0{% endif %}">
+                   value="{{ xero_cost.book_pages_roman }}">
             <label for="book_pages_roman">numeracja rzymska (na początku)
             </label>
         </div>
