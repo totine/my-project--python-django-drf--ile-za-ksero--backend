@@ -29,6 +29,22 @@
             </label>
         </div>
     </div>
+<hr>
+<div class="row">
+    <div class="col-md-2">
+        <label for="sides">Ilość stron z książki na stronie ksera</label>
+    </div>
+    <div class="col-md-9">
+        <div class="btn btn-outline-primary">
+            <input type="radio" name="scale" value="two-to-one"
+                   {% if xero_cost.is_two_to_one %}checked{% endif %}> 2 na 1
+        </div>
+        <div class="btn btn-outline-primary">
+            <input type="radio" name="scale" value="one-to-one"
+                   {% if not xero_cost.is_two_to_one %}checked{% endif %}> 1 na 1 {{ xero_cost.is_two_to_one }}
+        </div>
+    </div>
+</div>
     <hr>
     {% include 'elements/sides-choice-input.html' %}
     {% include 'elements/xero-bind-price-input.html' %}

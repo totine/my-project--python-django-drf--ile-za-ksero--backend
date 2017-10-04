@@ -143,7 +143,7 @@ class XeroBookCalc(XeroCalc):
 
     @property
     def number_of_pages(self):
-        return int(math.ceil(self.all_book_pages/2))
+        return int(math.ceil(self.all_book_pages/2)) if self.is_two_to_one else self.all_book_pages
 
     @property
     def number_of_cards(self):
