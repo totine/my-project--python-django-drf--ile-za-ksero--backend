@@ -67,7 +67,7 @@ def calculate_book(request):
            or not XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"]) or \
            XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"]).cost_short_name != "book"\
         else XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"])
-    print(arabic_pages)
+    xero_cost.is_two_to_one = True if request.POST['scale'] == "two-to-one" else False
     xero_cost.book_pages_arabic = arabic_pages
     xero_cost.book_pages_roman = roman_pages
     xero_cost.bind_cost = bind_cost
@@ -102,17 +102,17 @@ def reset_xero_list(request):
 
 def calculate_by_weight(request):
     sides_dict = {"onesided": False, "twosided": False, "mixonesided": False, "mixtwosided": False}
-    cost_name = request.POST["name"]
+    cost_name = request.POST["name"] if "name" in request.POST else ""
     cost_per_page = Decimal(request.POST.get('cost_per_page', 0))/100
     sides_dict[request.POST.get('sides', '')] = True
-    number_of_one_sided_pages_in_two_sided_mix = int(request.POST['onesided-in-mixtwosided']) if request.POST['onesided-in-mixtwosided'] else 0
-    number_of_two_sided_pages_in_one_sided_mix = int(request.POST['twosided-in-mixonesided']) if request.POST['twosided-in-mixonesided'] else 0
+    number_of_one_sided_pages_in_two_sided_mix = int(request.POST['onesided-in-mixtwosided']) if 'onesided-in-mixtwosided' in request.POST and request.POST['onesided-in-mixtwosided'] else 0
+    number_of_two_sided_pages_in_one_sided_mix = int(request.POST['twosided-in-mixonesided']) if 'twosided-in-mixonesided' in request.POST and request.POST['twosided-in-mixonesided'] else 0
     bind_cost = Decimal(request.POST.get('bind_cost', 0))
     xero_cost = XeroByWeightCalc() if not "xero_cost_id" in request.session or not XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"]) \
         else XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"])
     xero_cost.cost_per_page = cost_per_page
     xero_cost.is_bind = True if 'is-bind' in request.POST else False
-    xero_cost.weight = int(request.POST['weight'])
+    xero_cost.weight = int(request.POST['weight']) if 'weight' in request.POST else 0
     xero_cost.bind_cost = bind_cost
     xero_cost.bind_ranges = Bind.objects.get(name="main")
     xero_cost.name = cost_name

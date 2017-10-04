@@ -8,7 +8,7 @@ class Bind(models.Model):
 
     def get_bind_price(self, number_of_pages):
         range_for_pages = self.bindrange_set.filter(range_top__gte=number_of_pages).first()
-        return range_for_pages.range_price
+        return range_for_pages.range_price if range_for_pages else 7
 
 
 class BindRange(models.Model):
@@ -21,6 +21,7 @@ class BindRange(models.Model):
 
     def __str__(self):
         return str(self.range_top) + "-" + str(self.range_price)
+
 
 class XeroList(models.Model):
 
@@ -134,6 +135,7 @@ class XeroBookCalc(XeroCalc):
     book_pages_arabic = models.PositiveIntegerField(default=0)
     book_pages_roman = models.PositiveIntegerField(default=0)
     cost_short_name = 'book'
+    is_two_to_one = models.BooleanField(default=True)
 
     @property
     def all_book_pages(self):
