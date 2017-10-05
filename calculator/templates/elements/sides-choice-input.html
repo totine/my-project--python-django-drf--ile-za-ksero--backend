@@ -3,11 +3,11 @@
         <label for="sides">1- czy 2-stronne?</label>
     </div>
     <div class="col-md-9">
-        <div class="btn btn-outline-primary">
+        <div class="btn btn-outline-primary radio-input">
             <input type="radio" name="sides" value="onesided" onchange="hidePagesInputs(this.form)"
                    {% if xero_cost.is_one_sided %}checked{% endif %}> Wszystkie 1-stronne
         </div>
-        <div class="btn btn-outline-primary">
+        <div class="btn btn-outline-primary radio-input">
             <input type="radio" name="sides" value="twosided" onchange="hidePagesInputs(this.form)"
                    {% if xero_cost.is_two_sided %}checked{% endif %}> Wszystkie 2-stronne
         </div>

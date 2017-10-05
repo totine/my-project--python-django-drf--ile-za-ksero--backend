@@ -2,9 +2,6 @@ from decimal import Decimal
 
 import math
 from django.shortcuts import render, HttpResponse, redirect
-
-
-# Create your views here.
 from calculator.models import XeroCalc, XeroSimpleCalc, XeroBookCalc, XeroList, Bind, XeroByWeightCalc
 
 
@@ -18,7 +15,6 @@ def calculator(request):
         xero_list = XeroList()
     xero_list.save()
     xero_cost.bind_ranges = Bind.objects.get(name="main")
-    print(xero_cost.cost_per_page_in_grosz, xero_cost.cost_per_page, xero_cost.id)
     request.session["xero_list_id"] = xero_list.id
     data = {"xero_cost": xero_cost, "xero_list": xero_list}
 
@@ -38,7 +34,6 @@ def calculate(request):
                                     or not XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"]) or  XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"]).cost_short_name != "simple"\
         else XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"])
     xero_cost.cost_per_page = cost_per_page
-    print(request.POST['pages_or_cards'])
     xero_cost.is_cards_in_form = True if request.POST['pages_or_cards'] == 'cards' else False
     xero_cost.number_of_cards_or_pages_from_form = number_of_pages_or_cards
     xero_cost.bind_cost = bind_cost
@@ -58,6 +53,9 @@ def calculate(request):
 
 
 def calculate_book(request):
+    sides_dict = {"onesided": False, "twosided": False, "mixonesided": False, "mixtwosided": False}
+    sides_dict[request.POST.get('sides', '')] = True
+
     arabic_pages = int(request.POST.get('book_pages_arabic', 0)) if request.POST.get('book_pages_arabic', 0).isnumeric() else 0
     roman_pages = int(request.POST.get('book_pages_roman', 0)) if request.POST.get('book_pages_roman', 0).isnumeric() else 0
     bind_cost = Decimal(request.POST.get('bind_cost', 0))
@@ -72,9 +70,10 @@ def calculate_book(request):
     xero_cost.book_pages_roman = roman_pages
     xero_cost.bind_cost = bind_cost
     xero_cost.cost_per_page = cost_per_page
+    xero_cost.is_one_sided = sides_dict["onesided"]
+    xero_cost.is_two_sided = sides_dict["twosided"]
     xero_cost.bind_ranges = Bind.objects.get(name="main")
     xero_cost.save()
-    print(xero_cost.all_book_pages)
     request.session['xero_cost_id'] = xero_cost.id
     return redirect("/#calculation-resume")
 
