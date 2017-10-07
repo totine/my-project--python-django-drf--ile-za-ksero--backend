@@ -9,4 +9,6 @@ admin.site.register(XeroBaseBookCalc)
 admin.site.register(XeroBookCalc)
 admin.site.register(XeroSimpleCalc)
 admin.site.register(XeroList)
+admin.site.register(XeroPriceList)
+admin.site.register(XeroRange)
 

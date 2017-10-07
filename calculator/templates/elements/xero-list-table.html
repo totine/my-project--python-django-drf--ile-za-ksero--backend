@@ -5,7 +5,9 @@
         <th>Ilość stron</th>
         <th>Cena za stronę ksera</th>
         <th>Koszt bindu</th>
-        <th>Cały koszt bez bindu</th>
+        <th>Cena 1 kopii bez bindu</th>
+        <th>Cena 1 kopii z bindem</th>
+        <th>Ilość kopii</th>
         <th>Cały koszt z bindem</th>
         <th>Akcje</th>
     </tr>
@@ -18,6 +20,8 @@
             <td>{{ xero.bind_cost }} zł</td>
             <td>{{ xero.calc_xero_cost_without_bind }} zł</td>
             <td><b>{{ xero.calc_xero_cost_with_bind }} zł</b></td>
+                    <td>{{ xero.quantity }}</td>
+            <td><b>{{ xero.price_for_all_items }} zł</b></td>
             <td>
                 <a href="/costs/{{ xero.id }}"><i class="material-icon"></i>szczegóły</a>
                 <a href="/costs/{{ xero.id }}/edit"><i class="material-icon"></i>zmień</a>
@@ -32,6 +36,9 @@
         <td>{{ xero_list.get_all_bind_cost }} zł</td>
         <td>{{ xero_list.get_all_cost_without_bind }} zł</td>
         <td><b>{{ xero_list.get_all_cost_with_bind }} zł</b></td>
+        <td>{{ xero_list.get_all_quantity }} </td>
+        <td><b>{{ xero_list.get_all_price_for_all_items }} zł</b></td>
+
         <td><br></td>
     </tr>
 

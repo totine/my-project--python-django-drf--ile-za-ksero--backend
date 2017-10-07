@@ -5,11 +5,12 @@
     </tr>
     <tr>
         <th>Ilość stron ksera</th>
-        <td>{{ xero_cost.number_of_pages }}</td>
+        <td>{{ xero_cost.number_of_pages }} w 1 kopii<br>
+        {{ xero_cost.all_pages }} we wszystkich kopiach</td>
     </tr>
     <tr>
         <th>Ilość kartek</th>
-        <td>{{ xero_cost.number_of_cards }}</td>
+        <td>{{ xero_cost.number_of_cards }} w 1 kopii</td>
     </tr>
     <tr>
         <th>Cena z 1 stronę ksera</th>
@@ -17,11 +18,12 @@
     </tr>
     <tr>
         <th>Kwota bez bindu</th>
-        <td>{{ xero_cost.calc_xero_cost_without_bind }} zł</td>
+        <td>{{ xero_cost.calc_xero_cost_without_bind }} zł za 1 kopię</td>
     </tr>
     <tr>
         <th>Kwota z bindem</th>
-        <td>{{ xero_cost.calc_xero_cost_with_bind }} zł</td>
+        <td>{{ xero_cost.calc_xero_cost_with_bind }} zł za 1 kopię<br>
+        {{ xero_cost.price_for_all_items }} zł za wszystkie kopie</td>
     </tr>
     <tr>
         <th>Cena bindu</th>
