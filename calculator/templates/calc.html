@@ -119,7 +119,7 @@
                 <div class="card-text">
                     {% if xero_list.get_all_xero_calcs %}
                     <a href="reset">Zresetuj</a>
-                    <a href="/xerolists/{{ xero_list.id }}">Szczegóły</a>
+                    <a href="/xerolists/{{ xero_list.slug }}">Szczegóły</a>
                     {% include 'elements/xero-list-table.html' %}
                         {% else %}
                         Lista jest pusta

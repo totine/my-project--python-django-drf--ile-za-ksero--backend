@@ -1,9 +1,13 @@
 from decimal import Decimal
 
 import math
-from django.shortcuts import render, HttpResponse, redirect
+from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
+from django.utils.crypto import get_random_string
+
 from calculator.models import XeroCalc, XeroSimpleCalc, XeroBookCalc, XeroList, Bind, XeroByWeightCalc, XeroPriceList
 
+def generate_slug():
+    return get_random_string(length=6)
 
 def calculator(request):
 
@@ -12,9 +16,10 @@ def calculator(request):
     try:
         xero_list = XeroList.objects.get(pk=request.session["xero_list_id"])
     except:
-        xero_list = XeroList()
+        xero_list = XeroList(slug=generate_slug())
     xero_list.save()
     xero_cost.bind_ranges = Bind.objects.get(name="main")
+    print(xero_list.slug)
     request.session["xero_list_id"] = xero_list.id
     data = {"xero_cost": xero_cost, "xero_list": xero_list}
     return render(request, 'calc.html', context=data)
@@ -47,7 +52,7 @@ def calculate(request):
     xero_cost.two_sided_pages_in_mix = number_of_two_sided_pages_in_one_sided_mix if number_of_two_sided_pages_in_one_sided_mix and xero_cost.is_mix_with_one_sided_advantage else 0
     xero_cost.quantity = request.POST['quantity'] if 'quantity' in request.POST else 1
     xero_cost.save()
-    xero_list = XeroList.objects.get(pk=request.session["xero_list_id"]) if "xero_list_id" in request.session else XeroList()
+    xero_list = XeroList.objects.get(pk=request.session["xero_list_id"]) if "xero_list_id" in request.session else XeroList(slug=generate_slug())
     request.session["xero_list_id"] = xero_list.id
     request.session['xero_cost_id'] = xero_cost.id
     return redirect("/#calculation-resume")
@@ -83,7 +88,7 @@ def calculate_book(request):
 
 def add_xero_to_list(request):
     xero_cost = XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"])
-    xero_list = XeroList.objects.get(pk=request.session["xero_list_id"])
+    xero_list = XeroList.objects.get(pk=request.session["xero_list_id"]) if "xero_list_id" in request.session else XeroList(slug=generate_slug())
     xero_list.add(xero_cost)
     xero_cost.save()
     xero_list.save()
@@ -127,9 +132,10 @@ def calculate_by_weight(request):
     xero_cost.two_sided_pages_in_mix = number_of_two_sided_pages_in_one_sided_mix if number_of_two_sided_pages_in_one_sided_mix and xero_cost.is_mix_with_one_sided_advantage else 0
     xero_cost.quantity = request.POST['quantity'] if 'quantity' in request.POST else 1
     xero_cost.save()
-    xero_list = XeroList.objects.get(pk=request.session["xero_list_id"]) if "xero_list_id" in request.session else XeroList()
+    xero_list = XeroList.objects.get(pk=request.session["xero_list_id"]) if "xero_list_id" in request.session else XeroList(slug=generate_slug())
     request.session["xero_list_id"] = xero_list.id
     request.session['xero_cost_id'] = xero_cost.id
+    print(xero_list.slug)
     return redirect("/#calculation-resume")
 
 
@@ -138,6 +144,11 @@ def xerolist_view(request, xerolistid):
     data = {'xero_list': xerolist}
     return render(request, 'xerolist.html', context=data)
 
+
+def xerolist_view_slug(request, xerolistslug):
+    xerolist = get_object_or_404(XeroList, slug=xerolistslug)
+    data = {'xero_list': xerolist}
+    return render(request, 'xerolist.html', context=data)
 
 def xerolist_delete(request, xerolistid):
     xerolist = XeroList.objects.get(pk=xerolistid)

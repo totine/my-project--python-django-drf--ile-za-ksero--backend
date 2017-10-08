@@ -2,8 +2,13 @@ import math
 from unicodedata import decimal
 
 from django.db import models
+from django.utils.crypto import get_random_string
 
 from booklist.models import Book
+
+
+
+
 
 class Bind(models.Model):
     name = models.CharField(max_length=50)
@@ -48,6 +53,8 @@ class XeroRange(models.Model):
 class XeroList(models.Model):
     name = models.CharField(max_length=50, default="")
     xero_price_list = models.ForeignKey(XeroPriceList, default=None, null=True)
+    slug = models.SlugField(default="", null=True)
+
 
     def get_all_xero_pages(self):
         return sum([cost.number_of_pages for cost in self.get_all_xero_calcs()])

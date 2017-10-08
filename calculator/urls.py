@@ -15,5 +15,6 @@ urlpatterns = [
     url(r'^costs/(?P<costid>\d+)/delete/$', views.delete_cost, name="cost_delete"),
     url(r'^costs/(?P<costid>\d+)/edit/$', views.cost_edit, name="cost_edit"),
     url(r'^xerolists/(?P<xerolistid>\d+)$', views.xerolist_view, name="xerolist_view"),
+    url(r'^xerolists/(?P<xerolistslug>[0-9A-Za-z]{6})$', views.xerolist_view_slug, name="xerolist_view_slug"),
     url(r'^xerolists/(?P<xerolistid>\d+)/delete$', views.xerolist_delete, name="xerolist_view")
 ]
