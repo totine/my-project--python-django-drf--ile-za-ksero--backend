@@ -3,6 +3,8 @@ from decimal import Decimal
 from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
 from django.utils.crypto import get_random_string
 from calculator.models import XeroCalc, XeroSimpleCalc, XeroBookCalc, XeroList, Bind, XeroByWeightCalc, XeroPriceList
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 
 def generate_slug():
