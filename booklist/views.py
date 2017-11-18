@@ -19,3 +19,6 @@ def home(request):
     data = {"books": books, "categories": categories, "bind": bind, "cost_per_page": cost_per_page, "search": search}
     return render(request, 'home.html', context=data)
 
+
+def book_details(request):
+    return None
