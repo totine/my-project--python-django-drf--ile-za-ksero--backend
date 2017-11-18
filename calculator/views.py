@@ -1,13 +1,13 @@
 from decimal import Decimal
 
-import math
 from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
 from django.utils.crypto import get_random_string
-
 from calculator.models import XeroCalc, XeroSimpleCalc, XeroBookCalc, XeroList, Bind, XeroByWeightCalc, XeroPriceList
+
 
 def generate_slug():
     return get_random_string(length=6)
+
 
 def calculator(request):
 
@@ -19,68 +19,36 @@ def calculator(request):
         xero_list = XeroList(slug=generate_slug())
     xero_list.save()
     xero_cost.bind_ranges = Bind.objects.get(name="main")
-    print(xero_list.slug)
     request.session["xero_list_id"] = xero_list.id
     data = {"xero_cost": xero_cost, "xero_list": xero_list}
     return render(request, 'calc.html', context=data)
 
 
 def calculate(request):
-    sides_dict = {"onesided": False, "twosided": False, "mixonesided": False, "mixtwosided": False}
-    cost_name = request.POST.get('name', '')
-    cost_per_page = Decimal(request.POST.get('cost_per_page', 0))/100
     number_of_pages_or_cards = int(request.POST.get('number_of_pages_or_cards', 0))
-    sides_dict[request.POST.get('sides', '')] = True
-    number_of_one_sided_pages_in_two_sided_mix = int(request.POST['onesided-in-mixtwosided']) if 'onesided-in-mixtwoside' in request.POST and request.POST['onesided-in-mixtwosided'] else 0
-    number_of_two_sided_pages_in_one_sided_mix = int(request.POST['twosided-in-mixonesided']) if 'twosided-in-mixtwoside' in request.POST and request.POST['twosided-in-mixonesided'] else 0
-    bind_cost = Decimal(request.POST.get('bind_cost', 0))
     xero_cost = XeroSimpleCalc() if not "xero_cost_id" in request.session \
                                     or not XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"]) or  XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"]).cost_short_name != "simple"\
         else XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"])
-    xero_cost.cost_per_page = cost_per_page
+    common_cost_fields_fill(xero_cost, request)
     xero_cost.is_cards_in_form = True if 'cards' in request.POST and request.POST['pages_or_cards'] == 'cards' else False
     xero_cost.number_of_cards_or_pages_from_form = number_of_pages_or_cards
-    xero_cost.bind_cost = bind_cost
-    xero_cost.bind_ranges = Bind.objects.get(name="main")
-    xero_cost.xero_cost_ranges = XeroPriceList.objects.get(name="main")
-    xero_cost.name = cost_name
-    xero_cost.is_one_sided = sides_dict["onesided"]
-    xero_cost.is_two_sided = sides_dict["twosided"]
-    xero_cost.is_mix_with_one_sided_advantage = sides_dict["mixonesided"]
-    xero_cost.is_mix_with_two_sided_advantage = sides_dict["mixtwosided"]
-    xero_cost.one_sided_pages_in_mix = number_of_one_sided_pages_in_two_sided_mix if number_of_one_sided_pages_in_two_sided_mix and xero_cost.is_mix_with_two_sided_advantage else 0
-    xero_cost.two_sided_pages_in_mix = number_of_two_sided_pages_in_one_sided_mix if number_of_two_sided_pages_in_one_sided_mix and xero_cost.is_mix_with_one_sided_advantage else 0
-    xero_cost.quantity = request.POST['quantity'] if 'quantity' in request.POST else 1
     xero_cost.save()
-    xero_list = XeroList.objects.get(pk=request.session["xero_list_id"]) if "xero_list_id" in request.session else XeroList(slug=generate_slug())
-    request.session["xero_list_id"] = xero_list.id
     request.session['xero_cost_id'] = xero_cost.id
     return redirect("/#calculation-resume")
 
 
 def calculate_book(request):
-    sides_dict = {"onesided": False, "twosided": False, "mixonesided": False, "mixtwosided": False}
-    sides_dict[request.POST.get('sides', '')] = True
-
-    arabic_pages = int(request.POST.get('book_pages_arabic', 0)) if request.POST.get('book_pages_arabic', 0).isnumeric() else 0
-    roman_pages = int(request.POST.get('book_pages_roman', 0)) if request.POST.get('book_pages_roman', 0).isnumeric() else 0
-    bind_cost = Decimal(request.POST.get('bind_cost', 0))
-    cost_per_page = Decimal(request.POST.get('cost_per_page', 0)) / 100
     xero_cost = XeroBookCalc() \
         if not "xero_cost_id" in request.session \
            or not XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"]) or \
            XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"]).cost_short_name != "book"\
         else XeroCalc.get_xero_calc_by_id(request.session["xero_cost_id"])
+    common_cost_fields_fill(xero_cost, request)
+    arabic_pages = int(request.POST.get('book_pages_arabic', 0)) if request.POST.get('book_pages_arabic', 0).isnumeric() else 0
+    roman_pages = int(request.POST.get('book_pages_roman', 0)) if request.POST.get('book_pages_roman', 0).isnumeric() else 0
     xero_cost.is_two_to_one = True if request.POST['scale'] == "two-to-one" else False
     xero_cost.book_pages_arabic = arabic_pages
     xero_cost.book_pages_roman = roman_pages
-    xero_cost.bind_cost = bind_cost
-    xero_cost.cost_per_page = cost_per_page
-    xero_cost.is_one_sided = sides_dict["onesided"]
-    xero_cost.is_two_sided = sides_dict["twosided"]
-    xero_cost.bind_ranges = Bind.objects.get(name="main")
-    xero_cost.xero_cost_ranges = XeroPriceList.objects.get(name="main")
-    xero_cost.quantity = request.POST['quantity'] if 'quantity' in request.POST else 1
     xero_cost.save()
     request.session['xero_cost_id'] = xero_cost.id
     return redirect("/#calculation-resume")
@@ -178,3 +146,26 @@ def cost_reset(request):
 def new_calculation(request):
     del request.session['xero_cost_id']
     return redirect("/#calculator")
+
+
+def common_cost_fields_fill(xero_cost, request):
+    sides_dict = {"onesided": False, "twosided": False, "mixonesided": False, "mixtwosided": False}
+    cost_name = request.POST.get('name', '')
+    cost_per_page = Decimal(request.POST.get('cost_per_page', 0))/100
+    sides_dict[request.POST.get('sides', '')] = True
+    number_of_one_sided_pages_in_two_sided_mix = int(request.POST['onesided-in-mixtwosided']) if 'onesided-in-mixtwoside' in request.POST and request.POST['onesided-in-mixtwosided'] else 0
+    number_of_two_sided_pages_in_one_sided_mix = int(request.POST['twosided-in-mixonesided']) if 'twosided-in-mixtwoside' in request.POST and request.POST['twosided-in-mixonesided'] else 0
+    bind_cost = Decimal(request.POST.get('bind_cost', 0))
+    xero_cost.cost_per_page = cost_per_page
+    xero_cost.bind_cost = bind_cost
+    xero_cost.bind_ranges = Bind.objects.get(name="main")
+    xero_cost.xero_cost_ranges = XeroPriceList.objects.get(name="main")
+    xero_cost.name = cost_name
+    xero_cost.is_one_sided = sides_dict["onesided"]
+    xero_cost.is_two_sided = sides_dict["twosided"]
+    xero_cost.is_mix_with_one_sided_advantage = sides_dict["mixonesided"]
+    xero_cost.is_mix_with_two_sided_advantage = sides_dict["mixtwosided"]
+    xero_cost.one_sided_pages_in_mix = number_of_one_sided_pages_in_two_sided_mix if number_of_one_sided_pages_in_two_sided_mix and xero_cost.is_mix_with_two_sided_advantage else 0
+    xero_cost.two_sided_pages_in_mix = number_of_two_sided_pages_in_one_sided_mix if number_of_two_sided_pages_in_one_sided_mix and xero_cost.is_mix_with_one_sided_advantage else 0
+    xero_cost.quantity = request.POST['quantity'] if 'quantity' in request.POST else 1
+    xero_cost.name = request.POST['name']
