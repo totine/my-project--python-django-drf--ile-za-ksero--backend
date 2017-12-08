@@ -7,9 +7,6 @@ from django.utils.crypto import get_random_string
 from booklist.models import Book
 
 
-
-
-
 class Bind(models.Model):
     name = models.CharField(max_length=50)
 
