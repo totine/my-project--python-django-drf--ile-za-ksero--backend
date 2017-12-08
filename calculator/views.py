@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
 from django.utils.crypto import get_random_string
 from calculator.models import XeroCalc, XeroSimpleCalc, XeroBookCalc, XeroList, Bind, XeroByWeightCalc, XeroPriceList
+from calculator.serializers import XeroSimpleCalcSerializer, XeroCalcSerializer, XeroBookCalcSerializer, XeroByWeightCalcSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -171,3 +172,24 @@ def common_cost_fields_fill(xero_cost, request):
     xero_cost.two_sided_pages_in_mix = number_of_two_sided_pages_in_one_sided_mix if number_of_two_sided_pages_in_one_sided_mix and xero_cost.is_mix_with_one_sided_advantage else 0
     xero_cost.quantity = request.POST['quantity'] if 'quantity' in request.POST else 1
     xero_cost.name = request.POST['name']
+
+
+class CostListView(APIView):
+    def get(self, request):
+        costs = XeroCalc.objects.all()
+        serializer = XeroSimpleCalcSerializer(costs, many=True)
+        return Response(serializer.data)
+
+
+class CostDetails(APIView):
+    def get(self, request, costid):
+        cost = XeroCalc.get_xero_calc_by_id(costid)
+        serializers = {"simple": XeroSimpleCalcSerializer,
+                       "book": XeroBookCalcSerializer,
+                       "weight": XeroByWeightCalcSerializer}
+        serializer = serializers[cost.cost_short_name](cost)
+        return Response(serializer.data)
+
+
+
+
