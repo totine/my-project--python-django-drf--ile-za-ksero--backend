@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'calculator.apps.CalculatorConfig',
     'accounts.apps.AccountsConfig',
     'booklist.apps.BooklistConfig',
+    'filestoprint.apps.FilestoprintConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
